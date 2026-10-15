@@ -1,0 +1,4 @@
+vendor,vendor_order_no,order_date,tracking_no,vendor_sku,product_name,category,brand,model,mpn,upc,qty_ordered,qty_received,unit_cost,sell_price,min_stock
+Hitfar,91495,11/26/2025,520197801001,15-11388,"iPhone 17e/16e/15/14/13 Otterbox Commuter Series Case - Black",Cases,OtterBox,iPhone 15,77-92605,,2,2,29.17,,1
+Parts Supplier,401613535,09/22/2026,877605490364,107082022456,"Replacement Battery For iPhone 13 (AmpSentrix Basic Extended)",Batteries,AmpSentrix,iPhone 13,,,2,2,19.09,,1
+Cesium Telecom,SO-2000801,03/02/2026,,120-10588,"Commuter Case w/Magnets Galaxy S26+ Black",Cases,OtterBox,Galaxy S26+,7799801,,2,2,26.40,,1
