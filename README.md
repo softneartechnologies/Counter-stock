@@ -1,17 +1,19 @@
 # Counterstock Inventory (front-end prototype)
 
-Static site: `index.html` is the whole app. No build step.
+Multi-store inventory, register, returns/store credit, repairs and reporting for Sparktech Hub.
 
-## Deploy to Vercel
-    cd counterstock-vercel
-    npx vercel login        # first time only
-    npx vercel deploy --prod
+`index.html` is the whole app (static, no build step on Vercel).
 
-When asked: "Link to existing project?" -> No. Project name -> counterstock-inventory.
-"Override settings?" -> No (framework: Other, no build command, output = project root).
+## Editing
+Sources live in `src/` (CSS, JS modules, seed data built from the vendor files).
+After editing, rebuild with:
 
-Data is stored in each visitor's browser (localStorage). A shared backend is needed before real use.
+    python3 build.py
 
-## Source
-`src/` holds the editable sources (CSS, JS modules, seed data built from the vendor files).
-`index.html` is the built single-file app that Vercel serves.
+This regenerates `index.html` (served by Vercel) and `counterstock.html` (preview build).
+
+## Deploy
+Import this repo in Vercel → Framework preset "Other", no build command, output = root.
+Every push to `main` redeploys.
+
+Data is stored per browser (localStorage) until the backend is connected.

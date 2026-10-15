@@ -59,19 +59,20 @@ function showReceipt(o){modal(o.title,receiptHTML(o)+(FRAMED?`<div class="note i
 
 /* ---- navigation ---- */
 const NAV=[
- ['Daily work',[['dash','Dashboard','home'],['pos','Sell / Scan out','scan'],['returns','Returns & exchange','undo'],['repairs','Repairs','tool'],['exchange','Store exchange','swap']]],
- ['Stock',[['products','Products & labels','box'],['receive','Receive stock','inbox'],['batches','Receiving history','truck'],['alerts','Inventory alerts','bell']]],
- ['Records',[['customers','Customers & credit','user'],['shifts','Shifts & cash','cash'],['log','Activity log','list']]],
- ['Admin',[['admin','Stores & users','store']]],
- ['Technician',[['tech','Technician panel','tool']]],
- ['Help',[['guide','Daily guide','book']]]];
-const ACCESS={super:['dash','pos','returns','repairs','exchange','products','receive','batches','alerts','customers','shifts','log','admin','guide'],
- admin:['dash','pos','returns','repairs','exchange','products','receive','batches','alerts','customers','shifts','log','admin','guide'],
- staff:['pos','returns','repairs','exchange','products','receive','batches','alerts','customers','shifts','log','guide'],
+ ['',[['home','Home','grid'],['dash','Dashboard','chart']]],
+ ['Sell',[['pos','Register','scan'],['returns','Returns & exchange','undo'],['customers','Customers & credit','user']]],
+ ['Inventory',[['products','Products & labels','box'],['receive','Receive stock','inbox'],['alerts','Low stock alerts','bell'],['exchange','Store exchange','swap'],['batches','Receiving history','truck']]],
+ ['Service',[['repairs','Repairs','tool'],['tech','Technician panel','tool']]],
+ ['Records',[['shifts','Shifts & cash','cash'],['log','Activity log','list']]],
+ ['Settings',[['admin','Stores & users','store'],['guide','Help & daily guide','book']]]];
+const ACCESS={super:['dash','home','pos','returns','customers','products','receive','alerts','exchange','batches','repairs','shifts','log','admin','guide'],
+ admin:['dash','home','pos','returns','customers','products','receive','alerts','exchange','batches','repairs','shifts','log','admin','guide'],
+ staff:['home','pos','returns','customers','products','receive','alerts','exchange','batches','repairs','shifts','log','guide'],
  tech:['tech','guide']};
 const can=v=>ACCESS[me().role].includes(v);
 const isMgr=()=>['super','admin'].includes(me().role);
 function go(v){UI.view=v;UI.navOpen=false;render();window.scrollTo(0,0)}
+const initials=n=>n.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase();
 
 function render(){const app=$('#app');
   if(!S.session){app.innerHTML=loginView();drawCodes(app);return}
@@ -80,26 +81,27 @@ function render(){const app=$('#app');
   const pendingTr=S.transfers.filter(t=>t.status==='requested'&&(sid==='all'||t.from===sid)).length;
   const navCount={alerts:alertN,exchange:pendingTr,tech:S.repairs.filter(r=>r.status==='dispatch').length};
   app.innerHTML=`<div class="shell ${UI.navOpen?'nav-open':''}">
-  <aside class="side" aria-label="Main menu"><div class="brand"><div class="brand-mark"><i></i></div><div><b>Counterstock</b><small>Sparktech Hub · ${S.stores.length} stores</small></div></div>
-   <nav class="nav">${NAV.map(([h,items])=>{const vis=items.filter(i=>can(i[0]));if(!vis.length)return'';return `<div class="nav-h">${h}</div>`+vis.map(([id,t,icn])=>`<button class="${UI.view===id?'on':''}" data-act="go" data-v="${id}">${ic(icn)}<span>${t}</span>${navCount[id]?`<span class="cnt">${navCount[id]}</span>`:''}</button>`).join('')}).join('')}</nav>
-   <div class="side-foot">Signed in as <b style="color:var(--side-hi)">${esc(u.name)}</b><br>${ROLE_NAME[u.role]}${u.storeId?' · '+esc(ST(u.storeId).name):''}<br><button data-act="logout">Switch user</button></div></aside>
+  <aside class="side" aria-label="Main menu"><div class="brand"><div class="brand-mark"><i></i></div><div><b>Counterstock</b><small>Sparktech Hub</small></div></div>
+   <nav class="nav">${NAV.map(([h,items])=>{const vis=items.filter(i=>can(i[0]));if(!vis.length)return'';return (h?`<div class="nav-h">${h}</div>`:'')+vis.map(([id,t,icn])=>`<button class="${UI.view===id?'on':''}" data-act="go" data-v="${id}">${ic(icn)}<span>${t}</span>${navCount[id]?`<span class="cnt">${navCount[id]}</span>`:''}</button>`).join('')}).join('')}</nav>
+   <div class="side-foot"><div class="avatar">${esc(initials(u.name))}</div><div class="who"><b>${esc(u.name)}</b>${ROLE_NAME[u.role]}${u.storeId?' · '+esc(ST(u.storeId).name):''}<br><button data-act="logout">Switch user</button></div></div></aside>
   <div class="main"><header class="top">
    <button class="btn sm menu-btn" data-act="toggleNav" aria-label="Open menu">${ic('menu')}</button>
-   ${u.role==='super'?`<label class="row small" style="gap:6px"><span class="muted tip-b" data-tip="Super Admin can look at every store at once or step into one store to work its till.">Store</span><select class="in" style="width:auto;padding:5px 8px" id="storePick" data-on="pickStore"><option value="all" ${sid==='all'?'selected':''}>All stores</option>${S.stores.map(s=>`<option value="${s.id}" ${sid===s.id?'selected':''}>${esc(s.name)}</option>`).join('')}</select></label>`:u.role==='tech'?`<b>${ic('truck').replace('<svg','<svg style="width:16px;vertical-align:-3px"')} Field technician — all shops</b>`:`<b>${esc(ST(sid).name)}</b>`}
+   ${u.role==='super'?`<label class="store-chip">${ic('store')}<select class="in" style="width:auto;font-weight:700" id="storePick" data-on="pickStore" aria-label="Store"><option value="all" ${sid==='all'?'selected':''}>All stores</option>${S.stores.map(s=>`<option value="${s.id}" ${sid===s.id?'selected':''}>${esc(s.name)}</option>`).join('')}</select></label>`:u.role==='tech'?`<span class="store-chip">${ic('truck')} All shops</span>`:`<span class="store-chip">${ic('store')} ${esc(ST(sid).name)}</span>`}
+   ${u.role!=='tech'?`<div class="gsearch">${ic('search')}<input class="in" id="gq" placeholder="Search products, customers, repairs…" autocomplete="off" data-on="gsearch" aria-label="Search everything"><div class="gres" id="gres" hidden></div></div>`:''}
    <span class="grow"></span>
-   ${u.role!=='tech'&&sid!=='all'?(sh?`<span class="pill ok tip-b" data-tip="Opening balance ${money(sh.opening)}. Cash taken so far this shift: ${money(shiftCash(sh).cash)}."><span class="dot"></span>Shift open · since ${new Date(sh.openAt).toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})}</span><button class="btn sm tip-b" data-act="endShift" data-tip="Count the drawer and hand over the cash deposit.">End shift</button>`:`<span class="pill warn">No open shift</span><button class="btn sm pri" data-act="startShift">Start shift</button>`):''}
-   ${u.role!=='tech'?`<button class="btn sm ghost tip-b" data-act="go" data-v="alerts" data-tip="Products or categories at or below their minimum stock">${ic('bell')} <span class="num">${alertN}</span></button>`:''}
+   ${u.role!=='tech'&&sid!=='all'?(sh?`<span class="pill ok tip-b" data-tip="Opening balance ${money(sh.opening)}. Cash taken so far this shift: ${money(shiftCash(sh).cash)}."><span class="dot"></span>Shift open</span><button class="btn sm" data-act="endShift">End shift</button>`:`<button class="btn sm pri" data-act="startShift">Start shift</button>`):''}
+   ${u.role!=='tech'?`<button class="btn sm ghost tip-b tip-l" data-act="go" data-v="alerts" data-tip="Products at or below their alert level" aria-label="Low stock alerts">${ic('bell')} <span class="num">${alertN}</span></button>`:''}
   </header><main class="content" id="view">${VIEWS[UI.view]()}</main></div></div>`;
   drawCodes(app)}
 
-function needStore(){return `<div class="card card-b"><h2>Choose a store first</h2><p class="muted">This screen works on one store's till and stock. Pick the store you are working in.</p><div class="row">${S.stores.map(s=>`<button class="btn" data-act="setStore" data-s="${s.id}">${ic('store')} ${esc(s.name)}</button>`).join('')}</div></div>`}
+function needStore(){return `<div class="card card-b stack"><h2>Which store are you working in?</h2><p class="muted" style="margin:0">This screen works on one store's till and stock.</p><div class="tiles" style="margin:0">${S.stores.map(s=>`<button class="tile" data-act="setStore" data-s="${s.id}"><div class="ti">${ic('store')}</div><div><b>${esc(s.name)}</b><br><span>${esc(s.address)}</span></div></button>`).join('')}</div></div>`}
 
 /* ---- login + shift ---- */
 function loginView(){const groups=[['super','Owner'],['admin','Store admins'],['staff','Staff'],['tech','Technician']];
- return `<div class="login"><div class="login-card"><div class="login-hero"><div class="brand-mark" style="width:44px;height:44px"><i></i></div><div><h1>Counterstock</h1><div class="muted">Inventory, sales, returns and repairs for Sparktech Hub's ${S.stores.length} stores</div></div></div>
- <div class="note info" style="margin-bottom:16px">Prototype with sample accounts. Pick who you want to sign in as; each role sees a different set of screens. In the real build this is an email + PIN login. Products and vendor orders are loaded from the supplier files you shared; staff, customers, sales and repairs are made-up examples.</div>
- ${groups.map(([r,h])=>`<h3 style="margin:16px 0 8px">${h} ${tip({super:'Sees and manages every store. Creates stores, admins and staff.',admin:'Runs one store: stock, staff, shifts, reports.',staff:'Counter work: selling, receiving, returns, repairs intake.',tech:'Separate panel: pickups from every shop, repair costs, delivery dates.'}[r])}</h3><div class="acct">${S.users.filter(u=>u.role===r&&u.active).map(u=>`<button data-act="login" data-u="${u.id}"><b>${esc(u.name)}</b><span class="small muted">${ROLE_NAME[u.role]}${u.storeId?' · '+esc(ST(u.storeId).name):''}</span></button>`).join('')}</div>`).join('')}
- <p class="small muted" style="margin-top:22px">Data in this prototype is saved in this browser only. <button class="btn sm ghost" data-act="resetAsk">Reset demo data</button></p></div></div>`}
+ return `<div class="login"><div class="login-side"><div class="brand-mark"><i></i></div><h1>Counterstock</h1><p>Sales, stock, returns and repairs for all ${S.stores.length} Sparktech Hub stores in one place.</p><ul><li>Scan to sell, cash or card</li><li>Upload deliveries and print labels</li><li>Store credit that follows the customer</li><li>Reports by date, store and staff</li></ul></div>
+ <div class="login-main"><h2 style="font-size:22px">Who's signing in?</h2><p class="muted" style="margin:4px 0 18px">Tap your name. This prototype skips the PIN; the real system asks for one.</p>
+ ${groups.map(([r,h])=>`<h3 style="margin:18px 0 10px" class="muted">${h}</h3><div class="acct">${S.users.filter(u=>u.role===r&&u.active).map(u=>`<button data-act="login" data-u="${u.id}"><span class="avatar">${esc(initials(u.name))}</span><span><b>${esc(u.name)}</b><span class="small muted">${ROLE_NAME[u.role]}${u.storeId?' · '+esc(ST(u.storeId).name):''}</span></span></button>`).join('')}</div>`).join('')}
+ <div class="note info small" style="margin-top:24px">Products and vendor orders come from the supplier files you shared. Staff, customers, sales and repairs are sample data. Everything is saved in this browser only. <button class="btn sm ghost" data-act="resetAsk">Reset demo data</button></div></div></div>`}
 function shiftOpenModal(force){const last=S.shifts.filter(x=>x.storeId===curStore()&&x.closeAt).sort((a,b)=>b.closeAt-a.closeAt)[0];
  modal('Start your shift',`<p>Count the cash in the drawer before you serve the first customer and enter it below. This is your <b>opening balance</b>; the system adds every cash sale to it during your shift.</p>
  <label class="field"><span>Opening balance (cash in drawer) ${tip('Float left in the till for change. Usually the same every day, e.g. $25.')}</span><input class="in num" id="opening" type="number" step="0.01" min="0" value="${last?Math.min(25,last.declared).toFixed(2):'25.00'}" autofocus></label>

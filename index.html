@@ -1,184 +1,286 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Counterstock Inventory</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <style>
-/* Layout: fixed left rail of modules + scrolling work area; dense, scan-first operator UI */
+/* Layout: white rail of modules + roomy card grid; touch-friendly register UI with big targets */
 :root{
-  --bg:#F2F4F6; --surface:#FFFFFF; --surface-2:#EBEFF2; --line:#D6DDE3; --ink:#14202A; --muted:#566573;
-  --side:#13212B; --side-ink:#C4D0DA; --side-hi:#FFFFFF; --side-act:#1E3341;
-  --accent:#0A7468; --accent-ink:#FFFFFF; --accent-soft:#D9EEEA;
-  --warn:#9A5B00; --warn-soft:#FFF0D2; --danger:#B0232E; --danger-soft:#FBE2E4;
-  --ok:#1D7238; --ok-soft:#DFF2E4; --info:#24539E; --info-soft:#E0E9F8;
-  --paper:#FFFFFF; --paper-ink:#000000; --shadow:0 10px 30px rgba(14,30,40,.16);
-  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --f-head:"IBM Plex Sans Condensed","IBM Plex Sans",system-ui,sans-serif;
+  --bg:#F3F5F4; --surface:#FFFFFF; --surface-2:#F1F4F2; --line:#E2E7E4; --ink:#17201B; --muted:#5D6A63;
+  --side:#FFFFFF; --side-ink:#36433C; --side-act:#E6F4EB; --side-act-ink:#136B33; --side-line:#E2E7E4;
+  --accent:#1E8A45; --accent-hi:#18733A; --accent-ink:#FFFFFF; --accent-soft:#E4F3E9;
+  --warn:#93590A; --warn-soft:#FFF2D9; --danger:#B42330; --danger-soft:#FCE6E8;
+  --ok:#1D7238; --ok-soft:#E1F3E6; --info:#2257A6; --info-soft:#E3ECFA;
+  --s1:#2a78d6; --s2:#eb6834; --bar:#1E8A45; --bar-prev:#C9D3CD;
+  --paper:#FFFFFF; --paper-ink:#000000;
+  --shadow-sm:0 1px 2px rgba(16,32,22,.06),0 1px 1px rgba(16,32,22,.04);
+  --shadow:0 12px 32px rgba(16,32,22,.16);
+  --r:12px; --r-sm:8px;
+  --f-body:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-head:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0E151B; --surface:#151F28; --surface-2:#1B2833; --line:#2A3946; --ink:#E3EAF0; --muted:#94A3B0;
-  --side:#0A1015; --side-ink:#AEBBC6; --side-hi:#FFFFFF; --side-act:#18262F;
-  --accent:#3BB5A3; --accent-ink:#06201C; --accent-soft:#123630;
-  --warn:#F0B44C; --warn-soft:#3A2A0C; --danger:#F27C84; --danger-soft:#3D1519;
-  --ok:#6BCB8A; --ok-soft:#15301E; --info:#86AEF0; --info-soft:#18284A; --shadow:0 10px 30px rgba(0,0,0,.5); color-scheme:dark}}
+  --bg:#0E1311; --surface:#161D19; --surface-2:#1C2520; --line:#2A3630; --ink:#E5ECE8; --muted:#9AA8A0;
+  --side:#121815; --side-ink:#B9C6BF; --side-act:#1B3224; --side-act-ink:#86DCA2; --side-line:#24302A;
+  --accent:#3BB765; --accent-hi:#4CC874; --accent-ink:#04140A; --accent-soft:#163323;
+  --warn:#F0B44C; --warn-soft:#382A0E; --danger:#F27C84; --danger-soft:#3D1519;
+  --ok:#6BCB8A; --ok-soft:#15301E; --info:#86AEF0; --info-soft:#18284A;
+  --s1:#3987e5; --s2:#d95926; --bar:#3BB765; --bar-prev:#3A4741; --shadow-sm:0 1px 2px rgba(0,0,0,.4); --shadow:0 12px 32px rgba(0,0,0,.55); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0E151B; --surface:#151F28; --surface-2:#1B2833; --line:#2A3946; --ink:#E3EAF0; --muted:#94A3B0;
-  --side:#0A1015; --side-ink:#AEBBC6; --side-hi:#FFFFFF; --side-act:#18262F;
-  --accent:#3BB5A3; --accent-ink:#06201C; --accent-soft:#123630;
-  --warn:#F0B44C; --warn-soft:#3A2A0C; --danger:#F27C84; --danger-soft:#3D1519;
-  --ok:#6BCB8A; --ok-soft:#15301E; --info:#86AEF0; --info-soft:#18284A; --shadow:0 10px 30px rgba(0,0,0,.5); color-scheme:dark}
+  --bg:#0E1311; --surface:#161D19; --surface-2:#1C2520; --line:#2A3630; --ink:#E5ECE8; --muted:#9AA8A0;
+  --side:#121815; --side-ink:#B9C6BF; --side-act:#1B3224; --side-act-ink:#86DCA2; --side-line:#24302A;
+  --accent:#3BB765; --accent-hi:#4CC874; --accent-ink:#04140A; --accent-soft:#163323;
+  --warn:#F0B44C; --warn-soft:#382A0E; --danger:#F27C84; --danger-soft:#3D1519;
+  --ok:#6BCB8A; --ok-soft:#15301E; --info:#86AEF0; --info-soft:#18284A;
+  --s1:#3987e5; --s2:#d95926; --bar:#3BB765; --bar-prev:#3A4741; --shadow-sm:0 1px 2px rgba(0,0,0,.4); --shadow:0 12px 32px rgba(0,0,0,.55); color-scheme:dark}
 *{box-sizing:border-box}
 html,body{height:100%}
-body{background:var(--bg);color:var(--ink);font:14px/1.45 var(--f-body);margin:0}
-h1,h2,h3,h4{font-family:var(--f-head);font-weight:600;margin:0;text-wrap:balance;letter-spacing:.005em}
-h1{font-size:24px} h2{font-size:18px} h3{font-size:15px}
+body{background:var(--bg);color:var(--ink);font:14.5px/1.5 var(--f-body);margin:0;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--f-head);font-weight:700;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:26px} h2{font-size:17px} h3{font-size:15px}
 button,input,select,textarea{font:inherit;color:inherit}
-.mono{font-family:var(--f-mono);font-size:.92em}
+.mono{font-family:var(--f-mono);font-size:.9em}
 .num{font-variant-numeric:tabular-nums}
 .muted{color:var(--muted)} .small{font-size:12.5px} .right{text-align:right}
-a{color:var(--accent)}
+a{color:var(--accent);font-weight:500}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-/* shell */
-.shell{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:100%}
-.side{background:var(--side);color:var(--side-ink);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow:auto;padding-left:env(safe-area-inset-left,0px)}
-.brand{display:flex;gap:10px;align-items:center;padding:18px 16px 14px}
-.brand-mark{width:30px;height:30px;border-radius:6px;background:var(--accent);display:grid;place-items:center}
-.brand-mark i{display:block;width:16px;height:14px;background:repeating-linear-gradient(90deg,var(--accent-ink) 0 2px,transparent 2px 3px,var(--accent-ink) 3px 4px,transparent 4px 6px)}
-.brand b{display:block;color:var(--side-hi);font-family:var(--f-head);font-size:16px;letter-spacing:.02em}
-.brand small{font-size:11.5px;opacity:.75}
-.nav{display:flex;flex-direction:column;gap:1px;padding:4px 8px 16px}
-.nav-h{font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;opacity:.55;padding:14px 10px 6px}
-.nav button{all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;font-size:13.5px}
-.nav button:hover{background:var(--side-act);color:var(--side-hi)}
+/* ---------- shell ---------- */
+.shell{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100%}
+.side{background:var(--side);color:var(--side-ink);border-right:1px solid var(--side-line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow:auto;padding-left:env(safe-area-inset-left,0px)}
+.brand{display:flex;gap:11px;align-items:center;padding:20px 18px 12px}
+.brand-mark{width:36px;height:36px;border-radius:10px;background:var(--accent);display:grid;place-items:center;flex:none}
+.brand-mark i{display:block;width:18px;height:15px;background:repeating-linear-gradient(90deg,var(--accent-ink) 0 2px,transparent 2px 3px,var(--accent-ink) 3px 4px,transparent 4px 6px)}
+.brand b{display:block;color:var(--ink);font-size:17px;font-weight:800;letter-spacing:-.01em}
+.brand small{font-size:12px;color:var(--muted)}
+.nav{display:flex;flex-direction:column;gap:2px;padding:6px 12px 16px}
+.nav-h{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:700;padding:16px 12px 6px}
+.nav button{all:unset;cursor:pointer;display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;font-size:14.5px;font-weight:500;color:var(--side-ink)}
+.nav button:hover{background:var(--surface-2)}
 .nav button:focus-visible{outline:2px solid var(--accent)}
-.nav button.on{background:var(--side-act);color:var(--side-hi);box-shadow:inset 3px 0 0 var(--accent)}
-.nav svg{width:17px;height:17px;flex:none;opacity:.85}
-.nav .cnt{margin-left:auto;background:var(--danger);color:#fff;font-size:11px;border-radius:9px;padding:0 6px;font-weight:600}
-.side-foot{margin-top:auto;padding:12px 16px 18px;font-size:12px;border-top:1px solid rgba(255,255,255,.08)}
-.side-foot button{all:unset;cursor:pointer;color:var(--side-hi);text-decoration:underline;text-underline-offset:2px}
+.nav button.on{background:var(--side-act);color:var(--side-act-ink);font-weight:700}
+.nav svg{width:20px;height:20px;flex:none}
+.nav .cnt{margin-left:auto;background:var(--danger);color:#fff;font-size:11px;border-radius:10px;padding:1px 7px;font-weight:700}
+.side-foot{margin-top:auto;padding:14px 16px 18px;border-top:1px solid var(--side-line);display:flex;gap:10px;align-items:center}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}
+.side-foot .who{min-width:0;font-size:12.5px;line-height:1.35}
+.side-foot .who b{display:block;font-size:13.5px;color:var(--ink)}
+.side-foot button{all:unset;cursor:pointer;color:var(--accent);font-weight:600;font-size:12.5px}
 
 .main{min-width:0;display:flex;flex-direction:column}
-.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px))}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px max(20px,env(safe-area-inset-right,0px)) 10px max(20px,env(safe-area-inset-left,0px));min-height:64px}
 .top .grow{flex:1}
 .top .menu-btn{display:none}
-.tl a,.tbl a{text-decoration:none}
-.tl a:hover,.tbl a:hover{text-decoration:underline}
-.content{padding:22px max(16px,env(safe-area-inset-right,0px)) 60px max(16px,env(safe-area-inset-left,0px));max-width:1320px;width:100%}
-.page-h{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
-.page-h p{margin:4px 0 0;color:var(--muted);max-width:70ch}
+.store-chip{display:flex;align-items:center;gap:8px;font-weight:700}
+.store-chip svg{width:18px;height:18px;color:var(--accent)}
+.gsearch{position:relative;flex:1;max-width:420px;min-width:180px}
+.gsearch svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted);pointer-events:none}
+.gsearch .in{padding-left:38px;background:var(--surface-2);border-color:transparent;border-radius:999px;height:40px}
+.gsearch .in:focus{background:var(--surface)}
+.gres{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);z-index:40;max-height:420px;overflow:auto;padding:6px}
+.gres h4{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:8px 10px 4px}
+.gres button{all:unset;cursor:pointer;display:flex;justify-content:space-between;gap:10px;width:100%;box-sizing:border-box;padding:8px 10px;border-radius:8px;font-size:13.5px}
+.gres button:hover,.gres button:focus-visible{background:var(--surface-2)}
+.content{padding:24px max(20px,env(safe-area-inset-right,0px)) 64px max(20px,env(safe-area-inset-left,0px));max-width:1400px;width:100%}
+.page-h{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+.page-h p{margin:4px 0 0;color:var(--muted);max-width:72ch}
 
-/* controls */
-.btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);padding:7px 12px;border-radius:6px;cursor:pointer;font-weight:500;white-space:nowrap;font-size:13.5px}
+/* ---------- controls ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--surface);padding:0 14px;height:40px;border-radius:10px;cursor:pointer;font-weight:600;white-space:nowrap;font-size:14px;box-shadow:var(--shadow-sm);transition:background .12s,border-color .12s}
 .btn:hover{border-color:var(--muted)}
 .btn.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.btn.pri:hover{filter:brightness(1.08)}
-.btn.dan{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 45%,var(--line))}
-.btn.ghost{border-color:transparent;background:transparent}
-.btn.sm{padding:4px 9px;font-size:12.5px}
-.btn.lg{padding:11px 18px;font-size:15px}
+.btn.pri:hover{background:var(--accent-hi);border-color:var(--accent-hi)}
+.btn.dan{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 40%,var(--line))}
+.btn.ghost{border-color:transparent;background:transparent;box-shadow:none}
+.btn.ghost:hover{background:var(--surface-2)}
+.btn.sm{height:32px;padding:0 10px;font-size:13px;border-radius:8px}
+.btn.lg{height:52px;padding:0 22px;font-size:16px;border-radius:12px}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
-.btn svg{width:16px;height:16px}
-.field{display:flex;flex-direction:column;gap:5px;min-width:0}
-.field>span,.lbl{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.02em;display:flex;gap:6px;align-items:center}
-.in,select.in,textarea.in{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:8px 10px;min-width:0}
+.btn svg{width:18px;height:18px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field>span,.lbl{font-size:12.5px;font-weight:600;color:var(--muted);display:flex;gap:6px;align-items:center}
+.in,select.in,textarea.in{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:0 12px;height:40px;min-width:0}
+textarea.in{resize:vertical;min-height:80px;padding:10px 12px;height:auto}
 .in:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:var(--accent)}
-textarea.in{resize:vertical;min-height:70px}
 .grid{display:grid;gap:12px}
 .g2{grid-template-columns:repeat(2,minmax(0,1fr))} .g3{grid-template-columns:repeat(3,minmax(0,1fr))} .g4{grid-template-columns:repeat(4,minmax(0,1fr))}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.stack{display:flex;flex-direction:column;gap:12px}
-.check{display:flex;gap:8px;align-items:center;cursor:pointer;user-select:none}
+.stack{display:flex;flex-direction:column;gap:14px}
+.check{display:flex;gap:9px;align-items:center;cursor:pointer;user-select:none}
 .check input{width:18px;height:18px;accent-color:var(--accent)}
 .paybox{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.paybox label{border:1.5px solid var(--line);border-radius:8px;padding:12px;display:flex;gap:10px;align-items:center;cursor:pointer;font-weight:600}
-.paybox label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.paybox label{border:2px solid var(--line);border-radius:12px;padding:14px;display:flex;gap:10px;align-items:center;justify-content:center;cursor:pointer;font-weight:700;font-size:15px;min-height:58px;background:var(--surface)}
+.paybox label:has(input:checked){border-color:var(--accent);background:var(--accent-soft);color:var(--side-act-ink)}
 .paybox input{width:20px;height:20px;accent-color:var(--accent)}
+.seg{display:inline-flex;background:var(--surface-2);border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{all:unset;cursor:pointer;padding:7px 12px;border-radius:8px;font-weight:600;font-size:13px;color:var(--muted)}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm)}
+.seg button:focus-visible{outline:2px solid var(--accent)}
 
-/* surfaces */
-.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;min-width:0}
-.card-h{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line)}
-.card-b{padding:14px}
-.cols{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+/* filter bar */
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.filters .in{width:auto;min-width:150px}
+.range{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.range svg{width:18px;height:18px;color:var(--accent)}
+.range select.in{font-weight:600}
+.range input[type=date]{width:150px}
+.range-note{font-size:12.5px;color:var(--muted)}
+
+/* ---------- surfaces ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);min-width:0;box-shadow:var(--shadow-sm)}
+.card-h{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.card-b{padding:16px}
+.cols{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:16px;align-items:start}
 .cols.even{grid-template-columns:repeat(2,minmax(0,1fr))}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}
-.kpi{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px}
-.kpi .k{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
-.kpi .v{font-family:var(--f-head);font-size:26px;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums}
-.kpi .s{font-size:12px;color:var(--muted)}
+.kpis.k6{grid-template-columns:repeat(6,minmax(0,1fr))}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow-sm);min-width:0}
+.kpi .k{font-size:12.5px;color:var(--muted);font-weight:600}
+.kpi .v{font-size:25px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums;letter-spacing:-.02em;overflow-wrap:anywhere}
+.kpi .s{font-size:12px;color:var(--muted);margin-top:2px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.delta{display:inline-flex;align-items:center;gap:2px;font-weight:700;font-size:12px;padding:1px 7px;border-radius:99px}
+.delta.up{background:var(--ok-soft);color:var(--ok)} .delta.down{background:var(--danger-soft);color:var(--danger)} .delta.flat{background:var(--surface-2);color:var(--muted)}
 .tbl-wrap{overflow-x:auto}
-table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
-.tbl th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line);background:var(--surface-2);white-space:nowrap;position:sticky;top:0}
-.tbl td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-size:12px;color:var(--muted);font-weight:700;padding:10px 12px;border-bottom:1px solid var(--line);background:var(--surface-2);white-space:nowrap;position:sticky;top:0}
+.tbl td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
 .tbl tr.click{cursor:pointer}
 .tbl tr.click:hover td{background:var(--surface-2)}
 .tbl td.wrap{min-width:240px}
-.tbl .in{padding:5px 7px}
-.empty{padding:28px;text-align:center;color:var(--muted)}
+.tbl .in{height:34px;padding:0 8px}
+.empty{padding:30px;text-align:center;color:var(--muted)}
 
 /* pills */
-.pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
 .pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.warn{background:var(--warn-soft);color:var(--warn)}
 .pill.dan{background:var(--danger-soft);color:var(--danger)} .pill.info{background:var(--info-soft);color:var(--info)}
-.pill.acc{background:var(--accent-soft);color:var(--accent)}
+.pill.acc{background:var(--accent-soft);color:var(--side-act-ink)}
 .dot{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
-.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:14px;overflow-x:auto}
-.tabs button{all:unset;cursor:pointer;padding:9px 12px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
-.tabs button.on{color:var(--ink);border-bottom-color:var(--accent)}
-.tabs button:focus-visible{outline:2px solid var(--accent)}
+.tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px}
+.tabs button{all:unset;cursor:pointer;padding:9px 16px;font-weight:600;color:var(--muted);border-radius:99px;white-space:nowrap;background:var(--surface);border:1px solid var(--line)}
+.tabs button.on{color:var(--accent-ink);background:var(--accent);border-color:var(--accent)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 /* tooltip + help */
 [data-tip]{position:relative}
-[data-tip]:hover::after,[data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);background:var(--ink);color:var(--bg);font:500 12px/1.4 var(--f-body);padding:7px 9px;border-radius:6px;width:max-content;max-width:260px;white-space:normal;z-index:80;pointer-events:none;text-transform:none;letter-spacing:0;box-shadow:var(--shadow);text-align:left}
+[data-tip]:hover::after,[data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);background:var(--ink);color:var(--surface);font:500 12.5px/1.45 var(--f-body);padding:8px 10px;border-radius:8px;width:max-content;max-width:260px;white-space:pre-line;z-index:80;pointer-events:none;text-transform:none;letter-spacing:0;box-shadow:var(--shadow);text-align:left}
 [data-tip].tip-b:hover::after,[data-tip].tip-b:focus-visible::after{bottom:auto;top:calc(100% + 8px)}
 [data-tip].tip-l:hover::after{left:auto;right:0;transform:none}
-.qi{display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;border:1px solid currentColor;font-size:10.5px;font-weight:700;color:var(--muted);cursor:help;flex:none}
-.howto{background:var(--info-soft);border:1px solid color-mix(in srgb,var(--info) 25%,transparent);border-radius:8px;margin-bottom:16px}
-.howto summary{cursor:pointer;padding:10px 14px;font-weight:600;color:var(--info);list-style:none;display:flex;gap:8px;align-items:center}
+.qi{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;background:var(--surface-2);font-size:11px;font-weight:800;color:var(--muted);cursor:help;flex:none}
+.howto{background:var(--info-soft);border-radius:var(--r);margin-bottom:16px}
+.howto summary{cursor:pointer;padding:12px 16px;font-weight:700;color:var(--info);list-style:none;display:flex;gap:8px;align-items:center}
 .howto summary::-webkit-details-marker{display:none}
-.howto summary::before{content:"▸";transition:transform .15s}
-.howto[open] summary::before{transform:rotate(90deg)}
-.howto ol{margin:0;padding:0 18px 14px 38px;display:grid;gap:5px;max-width:95ch}
-.howto li::marker{font-weight:700;color:var(--info)}
+.howto summary::before{content:"?";display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--info);color:var(--surface);font-size:12px}
+.howto ol{margin:0;padding:0 20px 16px 42px;display:grid;gap:6px;max-width:95ch}
+.howto li::marker{font-weight:800;color:var(--info)}
 
-/* scan */
+/* ---------- home launcher ---------- */
+.hello{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.hello h1{font-size:28px}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}
+.tile{all:unset;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow-sm);transition:transform .12s,box-shadow .12s,border-color .12s;position:relative;min-height:128px;box-sizing:border-box}
+.tile:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--accent)}
+.tile:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tile .ti{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent)}
+.tile .ti svg{width:26px;height:26px}
+.tile b{font-size:16px;font-weight:700}
+.tile span{font-size:13px;color:var(--muted);line-height:1.4}
+.tile .badge{position:absolute;top:14px;right:14px;background:var(--danger);color:#fff;font-size:12px;font-weight:800;border-radius:99px;padding:2px 9px}
+.tile.c2 .ti{background:var(--info-soft);color:var(--info)} .tile.c3 .ti{background:var(--warn-soft);color:var(--warn)} .tile.c4 .ti{background:var(--danger-soft);color:var(--danger)}
+.attn{display:flex;flex-direction:column}
+.attn button{all:unset;cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.attn button:last-child{border-bottom:0}
+.attn button:hover{background:var(--surface-2)}
+.attn .n{min-width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:800;background:var(--surface-2)}
+.attn .n.dan{background:var(--danger-soft);color:var(--danger)} .attn .n.warn{background:var(--warn-soft);color:var(--warn)} .attn .n.ok{background:var(--ok-soft);color:var(--ok)}
+.attn .go{margin-left:auto;color:var(--muted)}
+.banner{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--warn-soft);border-radius:var(--r);padding:14px 16px;margin-bottom:16px}
+
+/* ---------- charts (HTML bars, one scale, hover tooltips) ---------- */
+.vchart{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;height:260px}
+.vy{display:flex;flex-direction:column;justify-content:space-between;font-size:11.5px;color:var(--muted);text-align:right;padding-bottom:22px;font-variant-numeric:tabular-nums}
+.vy span{line-height:0}
+.vplot{position:relative;display:flex;flex-direction:column;min-width:0}
+.vgrid{position:absolute;inset:0 0 22px 0;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
+.vgrid i{display:block;border-top:1px solid var(--line)}
+.vgrid i:last-child{border-top:1px solid var(--muted);opacity:.5}
+.vbars{position:relative;flex:1;display:flex;align-items:flex-end;gap:2px}
+.vcol{flex:1;height:100%;display:flex;align-items:flex-end;justify-content:center;cursor:default;min-width:0}
+.vcol .vbar{width:100%;max-width:38px;background:var(--bar);border-radius:4px 4px 0 0;min-height:0;transition:filter .1s}
+.vcol:hover .vbar,.vcol:focus-visible .vbar{filter:brightness(1.18)}
+.vcol:focus-visible{outline:none}
+.vx{height:22px;display:flex;gap:2px;font-size:11px;color:var(--muted)}
+.vx span{flex:1;text-align:center;white-space:nowrap;overflow:visible;min-width:0;padding-top:5px}
+.hbars{display:flex;flex-direction:column;gap:10px}
+.hrow{display:grid;grid-template-columns:minmax(90px,150px) minmax(0,1fr) auto;gap:10px;align-items:center;font-size:13.5px}
+.hrow .hl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.htrack{height:14px;background:var(--surface-2);border-radius:4px;overflow:hidden}
+.htrack i{display:block;height:100%;background:var(--s1);border-radius:0 4px 4px 0}
+.htrack.alt i{background:var(--s2)} .htrack.acc i{background:var(--bar)}
+.hrow .hv{font-variant-numeric:tabular-nums;font-weight:600;text-align:right;min-width:70px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.split{display:flex;height:16px;border-radius:6px;overflow:hidden;gap:2px;background:var(--surface)}
+.split i{display:block;height:100%}
+
+/* ---------- register ---------- */
+.reg{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:16px;align-items:start}
 .scan{display:flex;gap:8px;align-items:stretch}
-.scan .in{font:500 18px var(--f-mono);padding:12px 14px;border-width:2px}
+.scan .in{font:500 17px var(--f-mono);height:52px;border-width:2px;border-radius:12px}
+.scan .btn{height:52px}
 .scan-hint{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;font-size:12px}
-.chip{border:1px dashed var(--line);background:transparent;border-radius:5px;padding:2px 7px;font:12px var(--f-mono);cursor:pointer;color:var(--muted)}
+.chip{border:1px dashed var(--line);background:transparent;border-radius:6px;padding:2px 7px;font:12px var(--f-mono);cursor:pointer;color:var(--muted)}
 .chip:hover{border-color:var(--accent);color:var(--accent)}
-.prod-hit{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:14px;border:1.5px solid var(--accent);background:var(--accent-soft);border-radius:8px;margin-top:12px}
-.prod-hit h3{font-size:16px}
-.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:13px}
+.cats{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px}
+.cats button{all:unset;cursor:pointer;padding:8px 14px;border-radius:99px;background:var(--surface-2);font-weight:600;font-size:13px;white-space:nowrap}
+.cats button.on{background:var(--ink);color:var(--surface)}
+.cats button:focus-visible{outline:2px solid var(--accent)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.ptile{all:unset;cursor:pointer;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;background:var(--surface);min-height:112px;transition:border-color .1s,box-shadow .1s;position:relative;overflow:hidden}
+.ptile::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--cat,var(--accent))}
+.ptile:hover{border-color:var(--accent);box-shadow:var(--shadow-sm)}
+.ptile:focus-visible{outline:2px solid var(--accent)}
+.ptile .pn{font-weight:600;font-size:13px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.ptile .pp{margin-top:auto;display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.ptile .pp b{font-size:15px}
+.ptile.out{opacity:.55}
+.order{position:sticky;top:80px;display:flex;flex-direction:column;max-height:calc(100vh - 100px)}
+.order .lines{overflow:auto;flex:1;min-height:80px}
+.oline{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:10px 0;border-bottom:1px solid var(--line)}
+.prod-hit{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:12px 14px;border:1.5px solid var(--accent);background:var(--accent-soft);border-radius:12px;margin-top:12px}
+.prod-hit h3{font-size:15px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13.5px}
 .kv dt{color:var(--muted)} .kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
 .total-line{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0}
-.total-line.big{font-family:var(--f-head);font-size:22px;font-weight:600;border-top:1px solid var(--line);margin-top:6px;padding-top:10px}
-.qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:6px}
-.qty button{all:unset;cursor:pointer;width:26px;text-align:center;font-weight:700}
-.qty span{min-width:24px;text-align:center;font-variant-numeric:tabular-nums}
+.total-line.big{font-size:24px;font-weight:800;border-top:1px solid var(--line);margin-top:6px;padding-top:12px;letter-spacing:-.02em}
+.qty{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.qty button{all:unset;cursor:pointer;width:32px;height:32px;text-align:center;font-weight:800;font-size:16px;line-height:32px}
+.qty span{min-width:22px;text-align:center;font-variant-numeric:tabular-nums;font-weight:700}
 
-/* modal & drawer */
-.scrim{position:fixed;inset:0;background:rgba(8,16,22,.5);z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:max(5vh,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px));overflow:auto}
-.modal{background:var(--surface);border-radius:10px;box-shadow:var(--shadow);width:min(640px,100%);max-width:100%}
-.modal.wide{width:min(960px,100%)}
-.modal-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
-.modal-b{padding:18px;display:flex;flex-direction:column;gap:14px}
-.modal-f{padding:12px 18px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+/* ---------- modal & drawer ---------- */
+.scrim{position:fixed;inset:0;background:rgba(10,20,14,.45);z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:max(5vh,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 16px max(16px,env(safe-area-inset-left,0px));overflow:auto;backdrop-filter:blur(2px)}
+.modal{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);width:min(640px,100%);max-width:100%}
+.modal.wide{width:min(980px,100%)}
+.modal-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.modal-h h2{font-size:18px}
+.modal-b{padding:20px;display:flex;flex-direction:column;gap:16px}
+.modal-f{padding:14px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
 .scrim.drawer{justify-content:flex-end;padding:0}
-.scrim.drawer .modal{border-radius:0;height:100%;overflow:auto;width:min(720px,100%)}
+.scrim.drawer .modal{border-radius:16px 0 0 16px;height:100%;overflow:auto;width:min(740px,100%)}
 
 /* labels — physical paper, always white */
-.label-sheet{display:flex;flex-wrap:wrap;gap:8px;background:var(--surface-2);padding:12px;border-radius:8px;max-height:52vh;overflow:auto}
+.label-sheet{display:flex;flex-wrap:wrap;gap:8px;background:var(--surface-2);padding:12px;border-radius:10px;max-height:52vh;overflow:auto}
 .label{background:var(--paper);color:var(--paper-ink);border:1px solid #999;border-radius:3px;width:50mm;min-height:25mm;padding:1.5mm 2mm;display:flex;gap:2mm;align-items:center;font-family:var(--f-body)}
 .label.sm{width:38mm}
 .label .lt{flex:1;min-width:0;display:flex;flex-direction:column;gap:.5mm}
-.label .ln{font-size:7px;line-height:1.15;font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.label .lp{font-size:10px;font-weight:700}
+.label .ln{font-size:7px;line-height:1.15;font-weight:700;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.label .lp{font-size:10px;font-weight:800}
 .label .lc{font:6.5px var(--f-mono)}
 .label svg{display:block}
 .label .bc svg{width:100%;height:9mm}
 .label .qr svg{width:15mm;height:15mm}
-.code-box{background:var(--paper);color:var(--paper-ink);border-radius:6px;padding:10px;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+.code-box{background:var(--paper);color:var(--paper-ink);border-radius:10px;padding:12px;display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;border:1px solid var(--line)}
 .code-box svg{max-width:100%}
 
 /* receipt */
@@ -188,46 +290,59 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 .receipt .r{display:flex;justify-content:space-between;gap:8px}
 .receipt .c{text-align:center}
 
-/* timeline */
+/* timeline / tags */
 .tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
-.tl li{display:grid;grid-template-columns:110px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.tl li{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13.5px}
 .tl li:last-child{border-bottom:0}
-.tag{font:600 10.5px var(--f-mono);letter-spacing:.04em;padding:1px 6px;border-radius:4px;background:var(--surface-2);color:var(--muted)}
-.tag.SALE{background:var(--accent-soft);color:var(--accent)} .tag.RECEIVE,.tag.IMPORT{background:var(--info-soft);color:var(--info)}
+.tl a,.tbl a{text-decoration:none}
+.tl a:hover,.tbl a:hover{text-decoration:underline}
+.tag{font:700 10.5px var(--f-mono);letter-spacing:.03em;padding:2px 7px;border-radius:5px;background:var(--surface-2);color:var(--muted)}
+.tag.SALE{background:var(--accent-soft);color:var(--side-act-ink)} .tag.RECEIVE,.tag.IMPORT{background:var(--info-soft);color:var(--info)}
 .tag.ADJUST,.tag.ALERT{background:var(--warn-soft);color:var(--warn)} .tag.RETURN,.tag.CREDIT{background:var(--danger-soft);color:var(--danger)}
 .tag.REPAIR{background:var(--ok-soft);color:var(--ok)}
-.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.steps span{font-size:12.5px;padding:5px 10px;border-radius:99px;background:var(--surface-2);color:var(--muted);font-weight:600}
-.steps span.on{background:var(--accent);color:var(--accent-ink)}
-.steps span.done{background:var(--accent-soft);color:var(--accent)}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.steps span{font-size:13px;padding:6px 12px;border-radius:99px;background:var(--surface);border:1px solid var(--line);color:var(--muted);font-weight:600}
+.steps span.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.steps span.done{background:var(--accent-soft);border-color:transparent;color:var(--side-act-ink)}
 .pipeline{display:flex;gap:4px;flex-wrap:wrap}
-.pipeline span{font-size:11px;padding:2px 7px;border-radius:4px;background:var(--surface-2);color:var(--muted)}
-.pipeline span.on{background:var(--accent);color:var(--accent-ink)} .pipeline span.done{background:var(--accent-soft);color:var(--accent)}
+.pipeline span{font-size:11.5px;padding:3px 8px;border-radius:6px;background:var(--surface-2);color:var(--muted);font-weight:600}
+.pipeline span.on{background:var(--accent);color:var(--accent-ink)} .pipeline span.done{background:var(--accent-soft);color:var(--side-act-ink)}
 .diff-neg{color:var(--danger);font-weight:700} .diff-pos{color:var(--ok);font-weight:700}
-.toast{position:fixed;bottom:max(18px,env(safe-area-inset-bottom,0px));right:max(18px,env(safe-area-inset-right,0px));background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:8px;box-shadow:var(--shadow);z-index:90;font-weight:500;max-width:min(420px,calc(100vw - 32px))}
-.note{border-left:3px solid var(--warn);background:var(--warn-soft);padding:9px 12px;border-radius:4px;font-size:13px}
+.toast{position:fixed;bottom:max(20px,env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:12px 18px;border-radius:12px;box-shadow:var(--shadow);z-index:90;font-weight:600;max-width:min(460px,calc(100vw - 32px))}
+.note{border-left:4px solid var(--warn);background:var(--warn-soft);padding:10px 14px;border-radius:8px;font-size:13.5px}
 .note.info{border-color:var(--info);background:var(--info-soft)}
 .note.dan{border-color:var(--danger);background:var(--danger-soft)}
 
-/* login */
-.login{min-height:100%;display:grid;place-items:center;padding:30px max(16px,env(safe-area-inset-right,0px)) 30px max(16px,env(safe-area-inset-left,0px))}
-.login-card{width:min(860px,100%)}
-.login-hero{display:flex;gap:14px;align-items:center;margin-bottom:18px}
-.acct{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
-.acct button{all:unset;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:3px}
-.acct button:hover,.acct button:focus-visible{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
-.acct b{font-size:14.5px}
-.store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+/* ---------- login ---------- */
+.login{min-height:100vh;display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr)}
+.login-side{background:var(--accent);color:var(--accent-ink);padding:48px max(32px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:18px}
+.login-side .brand-mark{background:var(--accent-ink);width:52px;height:52px;border-radius:14px}
+.login-side .brand-mark i{background:repeating-linear-gradient(90deg,var(--accent) 0 2px,transparent 2px 3px,var(--accent) 3px 4px,transparent 4px 6px);width:24px;height:20px}
+.login-side h1{font-size:34px;color:var(--accent-ink)}
+.login-side p{margin:0;opacity:.9;max-width:36ch;font-size:15px}
+.login-side ul{margin:8px 0 0;padding:0;list-style:none;display:grid;gap:10px;font-weight:600}
+.login-side li::before{content:"✓";margin-right:10px}
+.login-main{padding:40px max(24px,env(safe-area-inset-right,0px)) 40px 32px;overflow:auto}
+.acct{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.acct button{all:unset;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;gap:12px;align-items:center;box-shadow:var(--shadow-sm)}
+.acct button:hover,.acct button:focus-visible{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.acct b{font-size:15px;display:block}
+.store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
 
-@media (max-width:1100px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.cols,.cols.even{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:1200px){.kpis.k6{grid-template-columns:repeat(3,minmax(0,1fr))}.reg{grid-template-columns:minmax(0,1fr) 360px}}
+@media (max-width:1100px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.cols,.cols.even{grid-template-columns:minmax(0,1fr)}.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.reg{grid-template-columns:minmax(0,1fr)}.order{position:static;max-height:none}}
 @media (max-width:860px){
   .shell{grid-template-columns:minmax(0,1fr)}
-  .side{position:fixed;inset:0 auto 0 0;width:260px;z-index:70;transform:translateX(-100%);transition:transform .2s}
+  .side{position:fixed;inset:0 auto 0 0;width:270px;z-index:70;transform:translateX(-100%);transition:transform .2s}
   .shell.nav-open .side{transform:none;box-shadow:var(--shadow)}
   .top .menu-btn{display:inline-flex}
   .g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .login{grid-template-columns:minmax(0,1fr)}
+  .login-side{padding:28px max(16px,env(safe-area-inset-left,0px)) 28px max(16px,env(safe-area-inset-right,0px))}
+  .login-main{padding:24px max(16px,env(safe-area-inset-right,0px)) 32px max(16px,env(safe-area-inset-left,0px))}
+  .gsearch{order:5;max-width:none;flex-basis:100%}
 }
-@media (max-width:520px){.g2,.g3,.g4{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.paybox{grid-template-columns:1fr}.tl li{grid-template-columns:1fr}}
+@media (max-width:520px){.top .pill{display:none}.top{gap:8px}.g2,.g3,.g4{grid-template-columns:minmax(0,1fr)}.kpis,.kpis.k6{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.paybox{grid-template-columns:1fr}.tl li{grid-template-columns:1fr}.tiles{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.tile{min-height:110px;padding:14px}.vchart{height:200px}.hrow{grid-template-columns:minmax(70px,100px) minmax(0,1fr) auto}.filters .in{min-width:0;flex:1}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 @media print{
   body *{visibility:hidden}
@@ -243,7 +358,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 <script>const SEED={"products":[{"vendorSku":"107182923024","upc":"","mpn":"","name":"OLED Assembly With Frame For Samsung Galaxy S22 5G (US & International) (Aftermarket Plus) (Phantom Black)","category":"Screens","brand":"","model":"Samsung Galaxy S22 5G","vendor":"Parts Supplier (web export)","cost":157.19},{"vendorSku":"107183123820","upc":"","mpn":"","name":"Back Glass w/ MagSafe Magnet & NFC & Flashlight Flex For iPhone 15 Pro (Used OEM Pull: Grade B) (Blue Titanium)","category":"Back Glass","brand":"","model":"iPhone 15 Pro","vendor":"Parts Supplier (web export)","cost":82.9},{"vendorSku":"107183138946","upc":"","mpn":"","name":"Back Glass w/ MagSafe Magnet For iPhone 15 Pro (No Logo) (Aftermarket) (Black Titanium)","category":"Back Glass","brand":"","model":"iPhone 15 Pro","vendor":"Parts Supplier (web export)","cost":31.19},{"vendorSku":"107085042473","upc":"","mpn":"","name":"Back Glass With 3M Adhesive For iPhone 13 (No Logo / Large Camera Hole) (Midnight)","category":"Back Glass","brand":"","model":"iPhone 13","vendor":"Parts Supplier (web export)","cost":6.4},{"vendorSku":"107085042475","upc":"","mpn":"","name":"Back Glass With 3M Adhesive For iPhone 13 (No Logo / Large Camera Hole) (Pink)","category":"Back Glass","brand":"","model":"iPhone 13","vendor":"Parts Supplier (web export)","cost":7.06},{"vendorSku":"107085042476","upc":"","mpn":"","name":"Back Glass With 3M Adhesive For iPhone 13 (No Logo / Large Camera Hole) (Red)","category":"Back Glass","brand":"","model":"iPhone 13","vendor":"Parts Supplier (web export)","cost":6.03},{"vendorSku":"107082063515","upc":"","mpn":"","name":"Replacement Battery For Motorola Moto G8 Power (XT2041-1 / XT2041-3 / 2020) / G Power (XT2041-4 / XT2041-6 / XT2041-7 / XT2041DL / 2020) (KZ50)","category":"Batteries","brand":"","model":"Motorola Moto G8 Power","vendor":"Parts Supplier (web export)","cost":11.3},{"vendorSku":"107082041532","upc":"","mpn":"","name":"Replacement Battery For LG G3 (BL-53YH)","category":"Batteries","brand":"","model":"LG G3","vendor":"Parts Supplier (web export)","cost":5.74},{"vendorSku":"107082004816","upc":"","mpn":"","name":"LCD Assembly With Steel Plate Pre-Installed For iPhone 11 (Aftermarket Pro: XO7 / Incell)","category":"Screens","brand":"","model":"iPhone 11","vendor":"Parts Supplier (web export)","cost":24.0},{"vendorSku":"107082080786","upc":"","mpn":"","name":"LCD Assembly With Steel Plate Pre-Installed For iPhone 11 (Aftermarket / Incell)","category":"Screens","brand":"","model":"iPhone 11","vendor":"Parts Supplier (web export)","cost":17.81},{"vendorSku":"107082002306","upc":"","mpn":"","name":"LCD Assembly With Steel Plate Pre-Installed For iPhone XR (Aftermarket: AQ7 / Incell)","category":"Screens","brand":"","model":"iPhone XR","vendor":"Parts Supplier (web export)","cost":20.33},{"vendorSku":"107082145094","upc":"","mpn":"","name":"OLED Assembly For iPhone 13 Pro Max (Aftermarket Pro: XO7 Soft)","category":"Screens","brand":"","model":"iPhone 13 Pro Max","vendor":"Parts Supplier (web export)","cost":55.15},{"vendorSku":"107082129004","upc":"","mpn":"","name":"OLED Assembly For iPhone 14 Plus (Aftermarket Pro: XO7 Soft)","category":"Screens","brand":"","model":"iPhone 14 Plus","vendor":"Parts Supplier (web export)","cost":54.03},{"vendorSku":"107082136522","upc":"","mpn":"","name":"Loudspeaker With Vibrator For Samsung Galaxy S23 Ultra 5G","category":"Small Parts","brand":"","model":"Samsung Galaxy S23 Ultra 5G","vendor":"Parts Supplier (web export)","cost":5.91},{"vendorSku":"107082136562","upc":"","mpn":"","name":"Earpiece With Antenna Cover For Samsung Galaxy S23 Ultra","category":"Small Parts","brand":"","model":"Samsung Galaxy S23 Ultra","vendor":"Parts Supplier (web export)","cost":1.86},{"vendorSku":"107082104444","upc":"","mpn":"","name":"Charging Port Only For Google Pixel 6 Pro / 7 / 7 Pro / 8 / 8 Pro (Soldering Required)","category":"Small Parts","brand":"","model":"Google Pixel 6 Pro / 7 / 7 Pro / 8 / 8 Pro","vendor":"Parts Supplier (web export)","cost":7.94},{"vendorSku":"107082019720","upc":"","mpn":"","name":"Earpiece Speaker For Samsung Galaxy A01 Core/A20/A30/A30S/A40/A50/A70/J3/J3 Pro/J4/J4 Plus/J6 Plus/J5/J7 (J710)/J7 (J737)/J7 (J727)/J7 Prime/A12 A13/A71/A02/A13 5G/A14/M14/A14 5G/A12 Nacho/A23/A23 5G/A7/A3/A5/A51/A24/M20/M30/A04s/A137","category":"Small Parts","brand":"","model":"Samsung Galaxy A01 Core/A20/A30/A30S/A40/A50/A70/J3/J3 Pro/J","vendor":"Parts Supplier (web export)","cost":1.72},{"vendorSku":"107082103039","upc":"","mpn":"","name":"Earpiece Speaker For Samsung Galaxy A01 / A02S / A03 / A03 Core / A03S / A04 / A04E / A14 5G (A146U/P / 2023) / A10s / A20s / A21 / A22 5G / M01 / A15 / A15 5G / A05 / A05S / A06 / Tab A7 Lite (T220 / T225) / A16 5G (A166U / 2024)","category":"Small Parts","brand":"","model":"Samsung Galaxy A01 / A02S / A03 / A03 Core / A03S / A04 / A0","vendor":"Parts Supplier (web export)","cost":1.72},{"vendorSku":"107082111382","upc":"","mpn":"","name":"Loudspeaker For Samsung Galaxy A14 5G (A146U / P / 2023)","category":"Small Parts","brand":"","model":"Samsung Galaxy A14 5G","vendor":"Parts Supplier (web export)","cost":2.72},{"vendorSku":"107082069206","upc":"","mpn":"","name":"LCD Assembly For iPhone 11 Pro Max (Aftermarket: AQ7 / Incell)","category":"Screens","brand":"","model":"iPhone 11 Pro Max","vendor":"Parts Supplier (web export)","cost":19.93},{"vendorSku":"107083546430","upc":"","mpn":"","name":"LCD Assembly For iPhone 15 Pro (Aftermarket: AQ7 / Incell) (120HZ)","category":"Screens","brand":"","model":"iPhone 15 Pro","vendor":"Parts Supplier (web export)","cost":31.26},{"vendorSku":"107182199475","upc":"","mpn":"","name":"LCD Assembly For iPhone 17 Pro (Aftermarket: AQ7 3.0) (120HZ)","category":"Screens","brand":"","model":"iPhone 17 Pro","vendor":"Parts Supplier (web export)","cost":71.1},{"vendorSku":"107085008845","upc":"","mpn":"","name":"USB Type C To USB Type A Cable (1.8 m / 6 ft) (AmpSentrix Infinity) (Black)","category":"Cables & Chargers","brand":"AmpSentrix","model":"","vendor":"Parts Supplier (web export)","cost":4.93},{"vendorSku":"107085008839","upc":"","mpn":"","name":"USB Type C To USB Type C Cable (1.8 m / 6 ft) (AmpSentrix Infinity) (Black)","category":"Cables & Chargers","brand":"AmpSentrix","model":"","vendor":"Parts Supplier (web export)","cost":6.64},{"vendorSku":"107282215085","upc":"","mpn":"","name":"Replacement Battery For iPhone 13 (AmpSentrix Plus Extended)","category":"Batteries","brand":"AmpSentrix","model":"iPhone 13","vendor":"Parts Supplier (web export)","cost":21.7},{"vendorSku":"107082131156","upc":"","mpn":"","name":"Replacement Battery For iPhone 13 (AmpSentrix Plus)","category":"Batteries","brand":"AmpSentrix","model":"iPhone 13","vendor":"Parts Supplier (web export)","cost":20.23},{"vendorSku":"107282215083","upc":"","mpn":"","name":"Replacement Battery For iPhone 12 Pro Max (AmpSentrix Plus Extended)","category":"Batteries","brand":"AmpSentrix","model":"iPhone 12 Pro Max","vendor":"Parts Supplier (web export)","cost":26.94},{"vendorSku":"107082022479","upc":"","mpn":"","name":"Replacement Battery For iPhone 12 Pro Max (AmpSentrix Basic)","category":"Batteries","brand":"AmpSentrix","model":"iPhone 12 Pro Max","vendor":"Parts Supplier (web export)","cost":21.55},{"vendorSku":"107082022450","upc":"","mpn":"","name":"Replacement Battery For iPhone 11 (AmpSentrix Basic Extended)","category":"Batteries","brand":"AmpSentrix","model":"iPhone 11","vendor":"Parts Supplier (web export)","cost":16.39},{"vendorSku":"107082022471","upc":"","mpn":"","name":"Replacement Battery For iPhone XR (AmpSentrix Basic Extended)","category":"Batteries","brand":"AmpSentrix","model":"iPhone XR","vendor":"Parts Supplier (web export)","cost":14.43},{"vendorSku":"107082000579","upc":"","mpn":"","name":"Replacement Battery For iPhone SE (2016) (AmpSentrix Pro)","category":"Batteries","brand":"AmpSentrix","model":"iPhone SE","vendor":"Parts Supplier (web export)","cost":10.48},{"vendorSku":"107082022460","upc":"","mpn":"","name":"Replacement Battery For iPhone 14 (AmpSentrix Basic Extended)","category":"Batteries","brand":"AmpSentrix","model":"iPhone 14","vendor":"Parts Supplier (web export)","cost":21.1},{"vendorSku":"107082360101","upc":"","mpn":"","name":"LCD Assembly With Frame (Without FingerPrint Sensor) For Samsung Galaxy S25 Ultra 5G (Aftermarket: Incell) (Titanium Jet Black)","category":"Screens","brand":"","model":"Samsung Galaxy S25 Ultra 5G","vendor":"Parts Supplier (web export)","cost":46.2},{"vendorSku":"107082360099","upc":"","mpn":"","name":"LCD Assembly With Frame (Without FingerPrint Sensor) For Samsung Galaxy S24 Ultra 5G (Aftermarket: Incell) (Titanium Black)","category":"Screens","brand":"","model":"Samsung Galaxy S24 Ultra 5G","vendor":"Parts Supplier (web export)","cost":34.99},{"vendorSku":"107182116868","upc":"","mpn":"","name":"LCD Assembly For iPhone 17 Pro Max (Aftermarket: AQ7 / Incell) (120HZ)","category":"Screens","brand":"","model":"iPhone 17 Pro Max","vendor":"Parts Supplier (web export)","cost":43.38},{"vendorSku":"107182116867","upc":"","mpn":"","name":"LCD Assembly For iPhone 17 Pro (Aftermarket: AQ7 / Incell) (120HZ)","category":"Screens","brand":"","model":"iPhone 17 Pro","vendor":"Parts Supplier (web export)","cost":42.4},{"vendorSku":"107182129282","upc":"","mpn":"","name":"LCD Assembly For iPhone 17 (Aftermarket: AQ7 / Incell) (120HZ)","category":"Screens","brand":"","model":"iPhone 17","vendor":"Parts Supplier (web export)","cost":36.86},{"vendorSku":"107082546396","upc":"","mpn":"","name":"OLED Assembly For iPhone 16 Pro Max (Aftermarket Pro: XO7 Soft) (120HZ)","category":"Screens","brand":"","model":"iPhone 16 Pro Max","vendor":"Parts Supplier (web export)","cost":88.68},{"vendorSku":"107182127839","upc":"","mpn":"","name":"LCD Assembly For iPhone 16 Pro (Aftermarket: AQ7 3.0) (120HZ)","category":"Screens","brand":"","model":"iPhone 16 Pro","vendor":"Parts Supplier (web export)","cost":71.1},{"vendorSku":"107282226239","upc":"","mpn":"","name":"LCD Assembly For iPhone 16 (Aftermarket / Incell)","category":"Screens","brand":"","model":"iPhone 16","vendor":"Parts Supplier (web export)","cost":20.01},{"vendorSku":"107182136582","upc":"","mpn":"","name":"OLED Assembly For iPhone 15 Pro Max (Aftermarket Pro: XO7 Soft) (120HZ)","category":"Screens","brand":"","model":"iPhone 15 Pro Max","vendor":"Parts Supplier (web export)","cost":57.67},{"vendorSku":"107182116525","upc":"","mpn":"","name":"OLED Assembly With Frame For Samsung Galaxy S24 Ultra (US & International Version) (Aftermarket Plus) (120Hz) (Titanium Black)","category":"Screens","brand":"","model":"Samsung Galaxy S24 Ultra","vendor":"Parts Supplier (web export)","cost":136.75},{"vendorSku":"107183138476","upc":"","mpn":"","name":"OLED Assembly For iPhone 14 Pro (Aftermarket Pro: XO7 Soft) (120HZ)","category":"Screens","brand":"","model":"iPhone 14 Pro","vendor":"Parts Supplier (web export)","cost":57.67},{"vendorSku":"107182127817","upc":"","mpn":"","name":"LCD Assembly For iPhone 13 Pro Max (Aftermarket: AQ7 3.0) (120HZ)","category":"Screens","brand":"","model":"iPhone 13 Pro Max","vendor":"Parts Supplier (web export)","cost":33.23},{"vendorSku":"107082069106","upc":"","mpn":"","name":"LCD Assembly With Steel Plate Pre-Installed For iPhone 11 (Aftermarket: AQ7 / Incell)","category":"Screens","brand":"","model":"iPhone 11","vendor":"Parts Supplier (web export)","cost":20.3},{"vendorSku":"107082069101","upc":"","mpn":"","name":"LCD Assembly With Steel Plate Pre-Installed For iPhone 11 (Refurbished)","category":"Screens","brand":"","model":"iPhone 11","vendor":"Parts Supplier (web export)","cost":35.01},{"vendorSku":"107183200660","upc":"","mpn":"","name":"OLED Assembly With Frame For Samsung Galaxy Note 20 Ultra 5G (Aftermarket Plus) (120Hz) (Mystic Black)","category":"Screens","brand":"","model":"Samsung Galaxy Note 20 Ultra 5G","vendor":"Parts Supplier (web export)","cost":129.71},{"vendorSku":"107082082797","upc":"","mpn":"","name":"Back Glass With 3M Adhesive For iPhone 12 (No Logo / Large Camera Hole) (Red)","category":"Back Glass","brand":"","model":"iPhone 12","vendor":"Parts Supplier (web export)","cost":4.86},{"vendorSku":"107082132044","upc":"","mpn":"","name":"Back Cover Glass With Camera Lens For Samsung Galaxy S24 Ultra 5G (No Logo) (Aftermarket Plus) (Titanium Black)","category":"Back Glass","brand":"","model":"Samsung Galaxy S24 Ultra 5G","vendor":"Parts Supplier (web export)","cost":14.36},{"vendorSku":"107082131157","upc":"","mpn":"","name":"Replacement Battery For iPhone 13 Mini (AmpSentrix Plus)","category":"Batteries","brand":"AmpSentrix","model":"iPhone 13 Mini","vendor":"Parts Supplier (web export)","cost":18.17},{"vendorSku":"107282215082","upc":"","mpn":"","name":"Replacement Battery For iPhone 12 / 12 Pro (AmpSentrix Plus Extended)","category":"Batteries","brand":"AmpSentrix","model":"iPhone 12 / 12 Pro","vendor":"Parts Supplier (web export)","cost":18.99},{"vendorSku":"107082022453","upc":"","mpn":"","name":"Replacement Battery For iPhone 12 / 12 Pro (AmpSentrix Basic Extended)","category":"Batteries","brand":"AmpSentrix","model":"iPhone 12 / 12 Pro","vendor":"Parts Supplier (web export)","cost":16.54},{"vendorSku":"107082022459","upc":"","mpn":"","name":"Replacement Battery For iPhone 13 Pro Max (AmpSentrix Basic Extended)","category":"Batteries","brand":"AmpSentrix","model":"iPhone 13 Pro Max","vendor":"Parts Supplier (web export)","cost":28.17},{"vendorSku":"107282215090","upc":"","mpn":"","name":"Replacement Battery For iPhone 14 Pro (AmpSentrix Plus Extended)","category":"Batteries","brand":"AmpSentrix","model":"iPhone 14 Pro","vendor":"Parts Supplier (web export)","cost":26.72},{"vendorSku":"107082131166","upc":"","mpn":"","name":"Replacement Battery For iPhone 15 Pro (AmpSentrix Plus)","category":"Batteries","brand":"AmpSentrix","model":"iPhone 15 Pro","vendor":"Parts Supplier (web export)","cost":26.75},{"vendorSku":"107082022456","upc":"","mpn":"","name":"Replacement Battery For iPhone 13 (AmpSentrix Basic Extended)","category":"Batteries","brand":"AmpSentrix","model":"iPhone 13","vendor":"Parts Supplier (web export)","cost":19.09},{"vendorSku":"107082134806","upc":"","mpn":"","name":"LCD Assembly With Frame For Honor X6B (Refurbished) (All Colors)","category":"Screens","brand":"","model":"Honor X6B","vendor":"Parts Supplier (web export)","cost":25.81},{"vendorSku":"15-12931","upc":"","mpn":"77-95859","name":"iPhone 16 Pro Otterbox Commuter w/ MagSafe Series Case - Green - Sagebrush","category":"Cases","brand":"OtterBox","model":"iPhone 16 Pro","vendor":"Hitfar","cost":28.67},{"vendorSku":"15-07807","upc":"","mpn":"77-65401","name":"iPhone 12/12 Pro Otterbox Black Defender Series Case","category":"Cases","brand":"OtterBox","model":"iPhone 12/12 Pro","vendor":"Hitfar","cost":34.89},{"vendorSku":"15-12289","upc":"","mpn":"77-94582","name":"Samsung Galaxy S24 5G Otterbox Symmetry Clear Series Case - Clear","category":"Cases","brand":"OtterBox","model":"Samsung Galaxy S24 5G","vendor":"Hitfar","cost":37.52},{"vendorSku":"15-11391","upc":"","mpn":"77-92618","name":"iPhone 17e/16e/15/14/13 Otterbox Commuter Series Case - Green - Get Your Greens","category":"Cases","brand":"OtterBox","model":"iPhone 17e/16e/15/14/13","vendor":"Hitfar","cost":29.17},{"vendorSku":"15-11388","upc":"","mpn":"77-92605","name":"iPhone 17e/16e/15/14/13 Otterbox Commuter Series Case - Black","category":"Cases","brand":"OtterBox","model":"iPhone 17e/16e/15/14/13","vendor":"Hitfar","cost":29.17},{"vendorSku":"15-11389","upc":"","mpn":"77-92612","name":"iPhone 17e/16e/15/14/13 Otterbox Commuter Series Case - Blue - Crisp Denim","category":"Cases","brand":"OtterBox","model":"iPhone 17e/16e/15/14/13","vendor":"Hitfar","cost":29.17},{"vendorSku":"15-11399","upc":"","mpn":"77-92969","name":"iPhone 17e/16e/15/14/13 Otterbox Defender XT w/ MagSafe Series Case - Blue - Baby Blue Jeans","category":"Cases","brand":"OtterBox","model":"iPhone 17e/16e/15/14/13","vendor":"Hitfar","cost":53.16},{"vendorSku":"15-11400","upc":"","mpn":"77-92970","name":"iPhone 17e/16e/15/14/13 Otterbox Defender XT w/ MagSafe Series Case - Black","category":"Cases","brand":"OtterBox","model":"iPhone 17e/16e/15/14/13","vendor":"Hitfar","cost":53.16},{"vendorSku":"15-14220","upc":"","mpn":"77-98186","name":"iPhone 17e/16e/15/14/13 Otterbox Symmetry Clear w/ MagSafe Series Case - Clear","category":"Cases","brand":"OtterBox","model":"iPhone 17e/16e/15/14/13","vendor":"Hitfar","cost":37.52},{"vendorSku":"15-12923","upc":"","mpn":"77-95838","name":"iPhone 16 Otterbox Commuter w/ MagSafe Series Case - Black","category":"Cases","brand":"OtterBox","model":"iPhone 16","vendor":"Hitfar","cost":29.17},{"vendorSku":"15-12944","upc":"","mpn":"77-96013","name":"iPhone 16 Otterbox Defender Pro w/ MagSafe Series Case - Black","category":"Cases","brand":"OtterBox","model":"iPhone 16","vendor":"Hitfar","cost":53.16},{"vendorSku":"15-12949","upc":"","mpn":"77-96021","name":"iPhone 16 Pro Otterbox Defender Pro w/ MagSafe Series Case - Blue - Baby Blue Jeans","category":"Cases","brand":"OtterBox","model":"iPhone 16 Pro","vendor":"Hitfar","cost":53.16},{"vendorSku":"15-12950","upc":"","mpn":"77-96024","name":"iPhone 16 Pro Otterbox Defender Pro w/ MagSafe Series Case - Black","category":"Cases","brand":"OtterBox","model":"iPhone 16 Pro","vendor":"Hitfar","cost":53.16},{"vendorSku":"15-12954","upc":"","mpn":"77-96031","name":"iPhone 16 Pro Otterbox Defender Pro w/ MagSafe Series Case - Green - Sagebrush","category":"Cases","brand":"OtterBox","model":"iPhone 16 Pro","vendor":"Hitfar","cost":53.16},{"vendorSku":"15-12956","upc":"","mpn":"77-96035","name":"iPhone 16 Pro Max Otterbox Defender Pro w/ MagSafe Series Case - Black","category":"Cases","brand":"OtterBox","model":"iPhone 16 Pro Max","vendor":"Hitfar","cost":53.16},{"vendorSku":"15-12955","upc":"","mpn":"77-96032","name":"iPhone 16 Pro Max Otterbox Defender Pro w/ MagSafe Series Case - Blue - Baby Blue Jeans","category":"Cases","brand":"OtterBox","model":"iPhone 16 Pro Max","vendor":"Hitfar","cost":53.16},{"vendorSku":"15-13071","upc":"","mpn":"77-96426","name":"iPhone 16 Pro Max Otterbox Symmetry Clear w/ MagSafe Series Case - Clear - Stardust 3.0","category":"Cases","brand":"OtterBox","model":"iPhone 16 Pro Max","vendor":"Hitfar","cost":37.52},{"vendorSku":"15-13823","upc":"","mpn":"77-97523","name":"Samsung Galaxy S25 Ultra Otterbox Symmetry Series w/Magnets Clear Case - Clear - Stardust","category":"Cases","brand":"OtterBox","model":"Samsung Galaxy S25 Ultra","vendor":"Hitfar","cost":37.52},{"vendorSku":"15-13754","upc":"","mpn":"77-97491","name":"Samsung Galaxy S25 Ultra Otterbox Commuter Series Case - Green - Sage Brush","category":"Cases","brand":"OtterBox","model":"Samsung Galaxy S25 Ultra","vendor":"Hitfar","cost":29.17},{"vendorSku":"15-13751","upc":"","mpn":"77-97487","name":"Samsung Galaxy S25 Ultra Otterbox Commuter Series Case - Black","category":"Cases","brand":"OtterBox","model":"Samsung Galaxy S25 Ultra","vendor":"Hitfar","cost":29.17},{"vendorSku":"15-12663","upc":"","mpn":"1FG500WBOX","name":"WHOOSH Screen Shine Refillable Bottle (Retail Box) - 500ml","category":"Audio & Accessories","brand":"WHOOSH","model":"","vendor":"Hitfar","cost":11.38},{"vendorSku":"15-14870","upc":"","mpn":"77-98855","name":"iPhone 18 Pro Max/17 Pro Max Otterbox Symmetry Clear w/MagSafe + Camera Control Case - Clear","category":"Cases","brand":"OtterBox","model":"iPhone 18 Pro Max","vendor":"Hitfar","cost":37.52},{"vendorSku":"15-14965","upc":"","mpn":"77-99771","name":"iPhone 17 Pro Max Otterbox Fre MagSafe Case - Black","category":"Cases","brand":"OtterBox","model":"iPhone 17 Pro Max","vendor":"Hitfar","cost":62.58},{"vendorSku":"15-14849","upc":"","mpn":"77-98348","name":"iPhone 18 Pro Max/17 Pro Max Otterbox Commuter w/MagSafe + Camera Control Case - Sagebrush Green","category":"Cases","brand":"OtterBox","model":"iPhone 18 Pro Max","vendor":"Hitfar","cost":29.17},{"vendorSku":"15-14844","upc":"","mpn":"77-98837","name":"iPhone 17 Pro Otterbox Symmetry Clear w/MagSafe + Camera Control Case - Stardust 3.0","category":"Cases","brand":"OtterBox","model":"iPhone 17 Pro","vendor":"Hitfar","cost":37.52},{"vendorSku":"15-14837","upc":"","mpn":"77-98830","name":"iPhone 18 Pro/17 Pro Otterbox Symmetry Clear w/MagSafe + Camera Control Case - Clear","category":"Cases","brand":"OtterBox","model":"iPhone 18 Pro","vendor":"Hitfar","cost":37.52},{"vendorSku":"15-14819","upc":"","mpn":"77-98421","name":"iPhone 18 Pro/17 Pro Otterbox Defender Pro w/MagSafe + Camera Control Case - Black","category":"Cases","brand":"OtterBox","model":"iPhone 18 Pro","vendor":"Hitfar","cost":53.16},{"vendorSku":"15-14818","upc":"","mpn":"77-98424","name":"iPhone 18 Pro/17 Pro Otterbox Defender Pro w/MagSafe + Camera Control Case - Blue Sentiment","category":"Cases","brand":"OtterBox","model":"iPhone 18 Pro","vendor":"Hitfar","cost":53.16},{"vendorSku":"15-14782","upc":"","mpn":"77-98780","name":"iPhone 17 Otterbox Symmetry Clear w/MagSafe + Camera Control Case - Clear","category":"Cases","brand":"OtterBox","model":"iPhone 17","vendor":"Hitfar","cost":37.52},{"vendorSku":"15-14789","upc":"","mpn":"77-98787","name":"iPhone 17 Otterbox Symmetry Clear w/MagSafe + Camera Control Case - Stardust 3.0","category":"Cases","brand":"OtterBox","model":"iPhone 17","vendor":"Hitfar","cost":37.52},{"vendorSku":"15-11411","upc":"","mpn":"77-93432","name":"iPhone 15 Otterbox Fre MagSafe Case - Black","category":"Cases","brand":"OtterBox","model":"iPhone 15","vendor":"Hitfar","cost":62.58},{"vendorSku":"15-13613","upc":"","mpn":"16031","name":"HyperGear Activ8 Smartwatch + Fitness Tracker","category":"Audio & Accessories","brand":"HyperGear","model":"","vendor":"Hitfar","cost":59.0},{"vendorSku":"15-12453","upc":"","mpn":"CH052700","name":"iPhone 15 Pro Coach Slim Wrap Signature C Case - Charcoal","category":"Cases","brand":"Coach","model":"iPhone 15 Pro","vendor":"Hitfar","cost":12.99},{"vendorSku":"15-12444","upc":"","mpn":"CH052690","name":"iPhone 15/14/13 Coach Slim Wrap Signature C Case - Charcoal","category":"Cases","brand":"Coach","model":"iPhone 15/14/13","vendor":"Hitfar","cost":18.99},{"vendorSku":"15-12466","upc":"","mpn":"CH052720","name":"iPhone 15 Pro Max Coach Slim Wrap Signature C Case - Charcoal","category":"Cases","brand":"Coach","model":"iPhone 15 Pro Max","vendor":"Hitfar","cost":18.99},{"vendorSku":"15-12438","upc":"","mpn":"CH052476","name":"iPhone 15/14/13 Coach Leather Slim Wrap Signature C Case - Black Emboss","category":"Cases","brand":"Coach","model":"iPhone 15/14/13","vendor":"Hitfar","cost":18.99},{"vendorSku":"15-13369","upc":"","mpn":"CH054096","name":"iPhone 16 Pro Coach Slim Wrap Signature C Case - Charcoal","category":"Cases","brand":"Coach","model":"iPhone 16 Pro","vendor":"Hitfar","cost":29.99},{"vendorSku":"15-13362","upc":"","mpn":"CH054094","name":"iPhone 16 Coach Slim Wrap Signature C Case - Charcoal","category":"Cases","brand":"Coach","model":"iPhone 16","vendor":"Hitfar","cost":29.99},{"vendorSku":"15-13578","upc":"","mpn":"15ECLIPSEBLUE","name":"iPhone 17e/16e/15/14/13 SPECTRUM Eclipse MagSafe Case - Blue Gradient","category":"Cases","brand":"Spectrum","model":"iPhone 17e/16e/15/14/13","vendor":"Hitfar","cost":14.95},{"vendorSku":"15-12670","upc":"","mpn":"124475114151","name":"iPad Pro 11-in M5/M4 UAG Metropolis SE - Blue","category":"Small Parts","brand":"UAG","model":"iPad Pro 11-in M5/M4","vendor":"Hitfar","cost":24.67},{"vendorSku":"15-12676","upc":"","mpn":"124476114151","name":"iPad Pro 13-in M5/M4 UAG Metropolis SE - Blue","category":"Small Parts","brand":"UAG","model":"iPad Pro 13-in M5/M4","vendor":"Hitfar","cost":32.86},{"vendorSku":"15-12044","upc":"","mpn":"702312745","name":"Google Pixel 8 Pro ZAGG/GEAR4 Graphene Crystal Palace Case - Clear","category":"Cases","brand":"ZAGG","model":"Google Pixel 8 Pro","vendor":"Hitfar","cost":5.99},{"vendorSku":"15-11617","upc":"","mpn":"702312600","name":"iPhone 15/14/13 ZAGG/GEAR4 Graphene Luxe Snap Case - Clear","category":"Cases","brand":"ZAGG","model":"iPhone 15/14/13","vendor":"Hitfar","cost":4.99},{"vendorSku":"15-08583","upc":"","mpn":"15418","name":"Hypergear 15W MagSafe Wireless Magnetic Charger w/ Connected USB-C PD Cable","category":"Cables & Chargers","brand":"HyperGear","model":"","vendor":"Hitfar","cost":14.7},{"vendorSku":"15-09405","upc":"","mpn":"78-80633","name":"Otterbox 15W MagSafe Wireless Charging Pad - Black","category":"Small Parts","brand":"OtterBox","model":"","vendor":"Hitfar","cost":21.73},{"vendorSku":"15-12338","upc":"","mpn":"15859","name":"Hypergear Stealth2 ANC Wireless On-Ear Headphones - Black","category":"Audio & Accessories","brand":"HyperGear","model":"","vendor":"Hitfar","cost":25.5},{"vendorSku":"15-14290","upc":"","mpn":"16074","name":"HyperGear SleepEez Mini Noise-Blocking True Wireless Earbuds","category":"Audio & Accessories","brand":"HyperGear","model":"","vendor":"Hitfar","cost":21.59},{"vendorSku":"15-12840","upc":"","mpn":"15886","name":"HyperGear Halo XL Wireless LED Speaker - Black","category":"Audio & Accessories","brand":"HyperGear","model":"","vendor":"Hitfar","cost":24.0},{"vendorSku":"15-13236","upc":"","mpn":"CM054334","name":"iPhone 16 Case-Mate Twinkle MagSafe Case - Disco","category":"Cases","brand":"Case-Mate","model":"iPhone 16","vendor":"Hitfar","cost":15.99},{"vendorSku":"15-14658","upc":"","mpn":"702318848","name":"iPhone 17 ZAGG Graphene Crystal Palace Lite Snap Case - Clear","category":"Cases","brand":"ZAGG","model":"iPhone 17","vendor":"Hitfar","cost":17.84},{"vendorSku":"15-14699","upc":"","mpn":"702318850","name":"iPhone 17 Pro ZAGG Graphene Crystal Palace Lite Snap Case - Clear","category":"Cases","brand":"ZAGG","model":"iPhone 17 Pro","vendor":"Hitfar","cost":17.84},{"vendorSku":"15-13379","upc":"","mpn":"702315034","name":"iPhone 16 ZAGG Graphene Crystal Palace Lite Snap Case - Clear","category":"Cases","brand":"ZAGG","model":"iPhone 16","vendor":"Hitfar","cost":18.39},{"vendorSku":"15-13422","upc":"","mpn":"702315112","name":"iPhone 16 Pro ZAGG Graphene Milan Snap Case - Iridescent","category":"Cases","brand":"ZAGG","model":"iPhone 16 Pro","vendor":"Hitfar","cost":12.99},{"vendorSku":"15-13416","upc":"","mpn":"702315036","name":"iPhone 16 Pro ZAGG Graphene Crystal Palace Lite Snap Case - Clear","category":"Cases","brand":"ZAGG","model":"iPhone 16 Pro","vendor":"Hitfar","cost":18.39},{"vendorSku":"15-13445","upc":"","mpn":"702315113","name":"iPhone 16 Pro Max ZAGG Graphene Milan Snap Case - Iridescent","category":"Cases","brand":"ZAGG","model":"iPhone 16 Pro Max","vendor":"Hitfar","cost":12.99},{"vendorSku":"15-10147","upc":"","mpn":"702010077","name":"iPhone 14 Pro Max Gear4 D3O Milan Snap Case - Black Swirl","category":"Cases","brand":"ZAGG","model":"iPhone 14 Pro Max","vendor":"Hitfar","cost":5.99},{"vendorSku":"15-08912","upc":"","mpn":"702008203","name":"iPhone 13 Pro Gear4 D3O Black Santa Cruz Case","category":"Cases","brand":"ZAGG","model":"iPhone 13 Pro","vendor":"Hitfar","cost":7.99},{"vendorSku":"15-00664","upc":"","mpn":"1FG08ENFR","name":"WHOOSH Screen Shine Pocket Sprayer","category":"Audio & Accessories","brand":"WHOOSH","model":"","vendor":"Hitfar","cost":3.9},{"vendorSku":"15-11384","upc":"","mpn":"77-92554","name":"iPhone 17e/16e/15/14/13 Otterbox Defender Series Case - Black","category":"Cases","brand":"OtterBox","model":"iPhone 17e/16e/15/14/13","vendor":"Hitfar","cost":53.16},{"vendorSku":"15-13963","upc":"","mpn":"77-97354","name":"iPhone 16 Otterbox Symmetry Clear Camera Control w/ MagSafe Series Case - Clear","category":"Cases","brand":"OtterBox","model":"iPhone 16","vendor":"Hitfar","cost":37.55},{"vendorSku":"15-14863","upc":"","mpn":"77-99303","name":"iPhone 18 Pro Max/17 Pro Max Otterbox Profile Case - Black Crystal","category":"Cases","brand":"OtterBox","model":"iPhone 18 Pro Max","vendor":"Hitfar","cost":18.74},{"vendorSku":"15-14761","upc":"","mpn":"77-98299","name":"iPhone 17 Otterbox Commuter w/MagSafe + Camera Control Case - Purple Mystery","category":"Cases","brand":"OtterBox","model":"iPhone 17","vendor":"Hitfar","cost":29.17},{"vendorSku":"15-13333","upc":"","mpn":"77-95617","name":"Google Pixel 9/9 Pro Otterbox Symmetry Clear Series Case - Clear","category":"Cases","brand":"OtterBox","model":"Google Pixel 9/9 Pro","vendor":"Hitfar","cost":37.52},{"vendorSku":"15-14445","upc":"","mpn":"77-98094","name":"Google Pixel 10/10 Pro Otterbox Symmetry w/MagSafe Series Case - Clear","category":"Cases","brand":"OtterBox","model":"Google Pixel 10/10 Pro","vendor":"Hitfar","cost":37.52},{"vendorSku":"15-14444","upc":"","mpn":"77-98141","name":"Google Pixel 10 Pro XL Otterbox Symmetry w/ MagSafe Series Case - Clear","category":"Cases","brand":"OtterBox","model":"Google Pixel 10 Pro XL","vendor":"Hitfar","cost":37.52},{"vendorSku":"15-15464","upc":"","mpn":"16356","name":"HyperGear 15W PowerFold Cube 3-in-1 Wireless Charging Stand Compatible w/Magsafe + Watch","category":"Cables & Chargers","brand":"HyperGear","model":"","vendor":"Hitfar","cost":34.27},{"vendorSku":"15-15449","upc":"","mpn":"16354","name":"Hypergear Stealth2 ANC Wireless On-Ear Headphones - Blue","category":"Audio & Accessories","brand":"HyperGear","model":"","vendor":"Hitfar","cost":36.43},{"vendorSku":"15-12339","upc":"","mpn":"15860","name":"Hypergear Stealth2 ANC Wireless On-Ear Headphones - White Bone","category":"Audio & Accessories","brand":"HyperGear","model":"","vendor":"Hitfar","cost":36.43},{"vendorSku":"15-11644","upc":"","mpn":"702312728","name":"iPhone 15/14/13 ZAGG/GEAR4 Graphene Everest Snap Kickstand Case - Marine","category":"Cases","brand":"ZAGG","model":"iPhone 15/14/13","vendor":"Hitfar","cost":7.99},{"vendorSku":"120-8126","upc":"","mpn":"BEDZP9","name":"DropZone Rugged Case Made for Google Pixel 9/9 Pro Clear","category":"Cases","brand":"Dropzone","model":"Pixel 9","vendor":"Cesium Telecom","cost":2.19},{"vendorSku":"120-9587","upc":"","mpn":"BEGP10PX1","name":"DropZone Air Case Pixel 10 Pro XL Clear","category":"Cases","brand":"Dropzone","model":"Pixel 10 Pro XL","vendor":"Cesium Telecom","cost":5.99},{"vendorSku":"150-1530","upc":"","mpn":"IFCKGOKEYBRBLK4","name":"Go Keyboard Wireless Black","category":"Audio & Accessories","brand":"iFrogz","model":"","vendor":"Cesium Telecom","cost":21.15},{"vendorSku":"120-10588","upc":"","mpn":"7799801","name":"Commuter Case w/Magnets Galaxy S26+ Black","category":"Cases","brand":"OtterBox","model":"Galaxy S26+","vendor":"Cesium Telecom","cost":26.4},{"vendorSku":"120-10525","upc":"","mpn":"SGYRSPECMTRSP","name":"Spectrum R Case Galaxy S26 Clear","category":"Cases","brand":"Spectrum","model":"Galaxy S26","vendor":"Cesium Telecom","cost":12.0},{"vendorSku":"120-10528","upc":"","mpn":"SGYPSPECMTRSP","name":"Spectrum R Case Galaxy S26+ Clear","category":"Cases","brand":"Spectrum","model":"Galaxy S26+","vendor":"Cesium Telecom","cost":12.0},{"vendorSku":"120-10531","upc":"","mpn":"SGYUSPECMTRSP","name":"Spectrum R Case Galaxy S26 Ultra Clear","category":"Cases","brand":"Spectrum","model":"Galaxy S26 Ultra","vendor":"Cesium Telecom","cost":12.0},{"vendorSku":"120-10569","upc":"","mpn":"7799800","name":"Commuter Case w/Magnets Galaxy S26 Black","category":"Cases","brand":"OtterBox","model":"Galaxy S26","vendor":"Cesium Telecom","cost":26.4},{"vendorSku":"120-10608","upc":"","mpn":"7799802","name":"Commuter Case w/Magnets Galaxy S26 Ultra Black","category":"Cases","brand":"OtterBox","model":"Galaxy S26 Ultra","vendor":"Cesium Telecom","cost":26.4},{"vendorSku":"115-2186","upc":"","mpn":"IFCMGOMOUSERBLK124","name":"Go Mouse Wireless Black","category":"Audio & Accessories","brand":"iFrogz","model":"","vendor":"Cesium Telecom","cost":15.3},{"vendorSku":"120-10593","upc":"","mpn":"7799849","name":"Defender Pro Case w/Magnets Galaxy S26+ Black","category":"Cases","brand":"OtterBox","model":"Galaxy S26+","vendor":"Cesium Telecom","cost":44.2},{"vendorSku":"120-10590","upc":"","mpn":"7799807","name":"Commuter Case w/Magnets Galaxy S26+ Blue Sentiment","category":"Cases","brand":"OtterBox","model":"Galaxy S26+","vendor":"Cesium Telecom","cost":26.4},{"vendorSku":"120-10574","upc":"","mpn":"7799848","name":"Defender Pro Case w/Magnets Galaxy S26 Black","category":"Cases","brand":"OtterBox","model":"Galaxy S26","vendor":"Cesium Telecom","cost":44.2},{"vendorSku":"120-10571","upc":"","mpn":"7799806","name":"Commuter Case w/Magnets Galaxy S26 Blue Sentiment","category":"Cases","brand":"OtterBox","model":"Galaxy S26","vendor":"Cesium Telecom","cost":26.4},{"vendorSku":"120-10610","upc":"","mpn":"7799808","name":"Commuter Case w/Magnets Galaxy S26 Ultra Blue Sentiment","category":"Cases","brand":"OtterBox","model":"Galaxy S26 Ultra","vendor":"Cesium Telecom","cost":26.4},{"vendorSku":"120-10612","upc":"","mpn":"7799850","name":"Defender Pro Case w/Magnets Galaxy S26 Ultra Black","category":"Cases","brand":"OtterBox","model":"Galaxy S26 Ultra","vendor":"Cesium Telecom","cost":44.2},{"vendorSku":"150-1564","upc":"","mpn":"XLDKBFOLK05GR","name":"Keyboard Folio Case iPad Pro 10.5/Air 3/iPad 10.2 2021/2020/2019 Grey","category":"Audio & Accessories","brand":"","model":"iPad","vendor":"Cesium Telecom","cost":50.99},{"vendorSku":"120-8567","upc":"","mpn":"BEDAIP163","name":"DropZone Air Case iPhone 16 Pro Clear","category":"Cases","brand":"Dropzone","model":"iPhone 16 Pro","vendor":"Cesium Telecom","cost":0.99},{"vendorSku":"120-8568","upc":"","mpn":"BEDAIP164","name":"DropZone Air Case iPhone 16 Pro Max Clear","category":"Cases","brand":"Dropzone","model":"iPhone 16 Pro Max","vendor":"Cesium Telecom","cost":0.99},{"vendorSku":"120-9620","upc":"","mpn":"BEDZAMS25","name":"DropZone Air Case Moto G Stylus 2025 Clear","category":"Cases","brand":"Dropzone","model":"Moto G Stylus 2025","vendor":"Cesium Telecom","cost":0.99},{"vendorSku":"120-9623","upc":"","mpn":"BEDZAMP25","name":"DropZone Air Case Moto G Power 2025 Clear","category":"Cases","brand":"Dropzone","model":"Moto G Power 2025","vendor":"Cesium Telecom","cost":1.19},{"vendorSku":"105-1990","upc":"","mpn":"A3PROBLK","name":"A3 Pro ANC Wireless Earbuds Black","category":"Audio & Accessories","brand":"A3","model":"","vendor":"Cesium Telecom","cost":39.2},{"vendorSku":"105-1992","upc":"","mpn":"A3PROBLU","name":"A3 Pro ANC Wireless Earbuds Blue","category":"Audio & Accessories","brand":"A3","model":"","vendor":"Cesium Telecom","cost":39.2},{"vendorSku":"105-1991","upc":"","mpn":"A3PROWHT","name":"A3 Pro ANC Wireless Earbuds White","category":"Audio & Accessories","brand":"A3","model":"","vendor":"Cesium Telecom","cost":39.2},{"vendorSku":"105-1951","upc":"","mpn":"IFCEBGOANCRBLK124","name":"Go Pop ANC True Wireless Earbuds Black","category":"Audio & Accessories","brand":"iFrogz","model":"","vendor":"Cesium Telecom","cost":31.95},{"vendorSku":"105-2015","upc":"","mpn":"IFCEBGOPODSRBLK124","name":"Go Pods ANC True Wireless Earbuds Black","category":"Audio & Accessories","brand":"iFrogz","model":"","vendor":"Cesium Telecom","cost":31.5},{"vendorSku":"105-1722","upc":"","mpn":"IFCEBGAIRSPRTRBLK124","name":"Go Air Sport True Wireless Earbuds Graphite","category":"Audio & Accessories","brand":"iFrogz","model":"","vendor":"Cesium Telecom","cost":30.15},{"vendorSku":"105-1690","upc":"","mpn":"IFCEBGAIRPOPRSLT124","name":"Go Air Pop True Wireless Headphones Slate","category":"Audio & Accessories","brand":"iFrogz","model":"","vendor":"Cesium Telecom","cost":21.75},{"vendorSku":"105-1688","upc":"","mpn":"IFCEBGAIRPOPRLLC124","name":"Go Air Pop True Wireless Headphones Lilac","category":"Audio & Accessories","brand":"iFrogz","model":"","vendor":"Cesium Telecom","cost":21.75},{"vendorSku":"105-1687","upc":"","mpn":"IFCEBGAIRPOPRBLK124","name":"Go Air Pop True Wireless Headphones Black","category":"Audio & Accessories","brand":"iFrogz","model":"","vendor":"Cesium Telecom","cost":21.75},{"vendorSku":"105-1870","upc":"","mpn":"ETHTWGBE","name":"True Wireless Earbuds Black","category":"Audio & Accessories","brand":"","model":"","vendor":"Cesium Telecom","cost":13.0},{"vendorSku":"105-1871","upc":"","mpn":"ETHTWGWE","name":"True Wireless Earbuds White","category":"Audio & Accessories","brand":"","model":"","vendor":"Cesium Telecom","cost":13.0}],"batches":[{"vendor":"Parts Supplier (web export)","ref":"401605779","date":"09/15/2026","tracking":"877265832827","zip":"V8W3M9","tax":16.36,"lines":[{"vendorSku":"107182923024","qty":1,"cost":157.19},{"vendorSku":"107183123820","qty":1,"cost":82.9},{"vendorSku":"107183138946","qty":1,"cost":31.19},{"vendorSku":"107085042473","qty":2,"cost":6.4},{"vendorSku":"107085042475","qty":1,"cost":7.06},{"vendorSku":"107085042476","qty":1,"cost":6.03}],"shipping":30.0,"shipVia":"FedEx Priority Overnight","ordered":7,"value":297.17},{"vendor":"Parts Supplier (web export)","ref":"401605809","date":"09/15/2026","tracking":"877265836167","zip":"V8W3M9","tax":1.35,"lines":[{"vendorSku":"107082063515","qty":1,"cost":11.3},{"vendorSku":"107082041532","qty":1,"cost":5.74}],"shipping":10.0,"shipVia":"FedEx Ground","ordered":2,"value":17.04},{"vendor":"Parts Supplier (web export)","ref":"401613355","date":"09/22/2026","tracking":"877604132297","zip":"V8P 1A4","tax":23.99,"lines":[{"vendorSku":"107082004816","qty":2,"cost":24.0},{"vendorSku":"107082080786","qty":2,"cost":17.81},{"vendorSku":"107082002306","qty":1,"cost":20.33},{"vendorSku":"107082145094","qty":1,"cost":55.15},{"vendorSku":"107082129004","qty":1,"cost":54.03},{"vendorSku":"107082136522","qty":1,"cost":5.91},{"vendorSku":"107082136562","qty":1,"cost":1.86},{"vendorSku":"107082104444","qty":1,"cost":7.94},{"vendorSku":"107082019720","qty":1,"cost":1.72},{"vendorSku":"107082103039","qty":1,"cost":1.72},{"vendorSku":"107082111382","qty":1,"cost":2.72},{"vendorSku":"107082069206","qty":1,"cost":19.93},{"vendorSku":"107083546430","qty":1,"cost":31.26},{"vendorSku":"107182199475","qty":1,"cost":71.1},{"vendorSku":"107085008845","qty":8,"cost":4.93},{"vendorSku":"107085008839","qty":8,"cost":6.64}],"shipping":30.0,"shipVia":"FedEx Priority Overnight","ordered":32,"value":449.85},{"vendor":"Parts Supplier (web export)","ref":"401613425","date":"09/22/2026","tracking":"877604133617","zip":"V8P 1A4","tax":11.29,"lines":[{"vendorSku":"107282215085","qty":2,"cost":21.7},{"vendorSku":"107082131156","qty":1,"cost":20.23},{"vendorSku":"107282215083","qty":1,"cost":26.94},{"vendorSku":"107082022479","qty":1,"cost":21.55},{"vendorSku":"107082022450","qty":2,"cost":16.39},{"vendorSku":"107082022471","qty":2,"cost":14.43},{"vendorSku":"107082000579","qty":2,"cost":10.48},{"vendorSku":"107082022460","qty":1,"cost":21.1}],"shipping":10.0,"shipVia":"FedEx Ground","ordered":12,"value":215.82},{"vendor":"Parts Supplier (web export)","ref":"401613452","date":"09/22/2026","tracking":"877605489923","zip":"V8W3M9","tax":50.75,"lines":[{"vendorSku":"107083546430","qty":1,"cost":31.26},{"vendorSku":"107082360101","qty":1,"cost":46.2},{"vendorSku":"107082360099","qty":1,"cost":34.99},{"vendorSku":"107182116868","qty":1,"cost":43.38},{"vendorSku":"107182116867","qty":1,"cost":42.4},{"vendorSku":"107182129282","qty":1,"cost":36.86},{"vendorSku":"107082546396","qty":1,"cost":88.68},{"vendorSku":"107182127839","qty":1,"cost":71.1},{"vendorSku":"107282226239","qty":1,"cost":20.01},{"vendorSku":"107182136582","qty":1,"cost":57.67},{"vendorSku":"107182116525","qty":1,"cost":136.75},{"vendorSku":"107183138476","qty":1,"cost":57.67},{"vendorSku":"107182127817","qty":1,"cost":33.23},{"vendorSku":"107082145094","qty":1,"cost":55.15},{"vendorSku":"107082069106","qty":2,"cost":20.3},{"vendorSku":"107082069101","qty":2,"cost":35.01},{"vendorSku":"107183200660","qty":1,"cost":129.71},{"vendorSku":"107082082797","qty":1,"cost":4.86},{"vendorSku":"107082132044","qty":1,"cost":14.36}],"shipping":0.0,"shipVia":"FedEx Standard Overnight","ordered":21,"value":1014.9},{"vendor":"Parts Supplier (web export)","ref":"401613535","date":"09/22/2026","tracking":"877605490364","zip":"V8W3M9","tax":10.58,"lines":[{"vendorSku":"107082131157","qty":1,"cost":18.17},{"vendorSku":"107282215082","qty":1,"cost":18.99},{"vendorSku":"107082022453","qty":1,"cost":16.54},{"vendorSku":"107082022459","qty":2,"cost":28.17},{"vendorSku":"107282215090","qty":1,"cost":26.72},{"vendorSku":"107082131166","qty":1,"cost":26.75},{"vendorSku":"107082022456","qty":2,"cost":19.09}],"shipping":10.0,"shipVia":"FedEx Ground","ordered":9,"value":201.69},{"vendor":"Parts Supplier (web export)","ref":"401619744","date":"09/28/2026","tracking":"877883033334","zip":"V8W3M9","tax":6.29,"lines":[{"vendorSku":"107082134806","qty":1,"cost":25.81},{"vendorSku":"107082360101","qty":1,"cost":45.81},{"vendorSku":"107082360099","qty":1,"cost":34.22}],"shipping":20.0,"shipVia":"FedEx Standard Overnight","ordered":3,"value":105.84},{"vendor":"Hitfar","ref":"91495","date":"11/26/2025","tracking":"PUROLATOR Air: 520197801001","lines":[{"vendorSku":"15-12931","qty":1,"cost":28.67,"shipped":1},{"vendorSku":"15-07807","qty":1,"cost":34.89,"shipped":1},{"vendorSku":"15-12289","qty":1,"cost":37.52,"shipped":1},{"vendorSku":"15-11391","qty":1,"cost":29.17,"shipped":1},{"vendorSku":"15-11388","qty":2,"cost":29.17,"shipped":2},{"vendorSku":"15-11389","qty":1,"cost":29.17,"shipped":1},{"vendorSku":"15-11399","qty":1,"cost":53.16,"shipped":1},{"vendorSku":"15-11400","qty":2,"cost":53.16,"shipped":2},{"vendorSku":"15-14220","qty":2,"cost":37.52,"shipped":2},{"vendorSku":"15-12923","qty":2,"cost":29.17,"shipped":2},{"vendorSku":"15-12944","qty":2,"cost":53.16,"shipped":2},{"vendorSku":"15-12949","qty":1,"cost":53.16,"shipped":1},{"vendorSku":"15-12950","qty":1,"cost":53.16,"shipped":1},{"vendorSku":"15-12954","qty":1,"cost":53.16,"shipped":1},{"vendorSku":"15-12956","qty":1,"cost":53.16,"shipped":1},{"vendorSku":"15-12955","qty":1,"cost":53.16,"shipped":1},{"vendorSku":"15-13071","qty":2,"cost":37.52,"shipped":2},{"vendorSku":"15-13823","qty":1,"cost":37.52,"shipped":1},{"vendorSku":"15-13754","qty":1,"cost":29.17,"shipped":1},{"vendorSku":"15-13751","qty":1,"cost":29.17,"shipped":1},{"vendorSku":"15-12663","qty":1,"cost":11.38,"shipped":1}],"shipping":0,"tax":53.28,"ordered":27,"value":1065.02},{"vendor":"Hitfar","ref":"91252","date":"11/23/2025","tracking":"PUROLATOR Air: 520178683246","lines":[{"vendorSku":"15-14870","qty":3,"cost":37.52,"shipped":3},{"vendorSku":"15-14965","qty":1,"cost":62.58,"shipped":1},{"vendorSku":"15-14849","qty":1,"cost":29.17,"shipped":1},{"vendorSku":"15-14844","qty":2,"cost":37.52,"shipped":2},{"vendorSku":"15-14837","qty":1,"cost":37.52,"shipped":1},{"vendorSku":"15-14819","qty":1,"cost":53.16,"shipped":1},{"vendorSku":"15-14818","qty":1,"cost":53.16,"shipped":1},{"vendorSku":"15-14782","qty":3,"cost":37.52,"shipped":3},{"vendorSku":"15-14789","qty":1,"cost":37.52,"shipped":1},{"vendorSku":"15-12956","qty":1,"cost":53.16,"shipped":1},{"vendorSku":"15-14220","qty":2,"cost":37.52,"shipped":2},{"vendorSku":"15-11411","qty":1,"cost":62.58,"shipped":1},{"vendorSku":"15-13613","qty":1,"cost":59.0,"shipped":1},{"vendorSku":"15-12453","qty":1,"cost":12.99,"shipped":1},{"vendorSku":"15-12444","qty":1,"cost":18.99,"shipped":1},{"vendorSku":"15-12466","qty":1,"cost":18.99,"shipped":1},{"vendorSku":"15-12438","qty":1,"cost":18.99,"shipped":1},{"vendorSku":"15-13369","qty":1,"cost":29.99,"shipped":1},{"vendorSku":"15-13362","qty":1,"cost":29.99,"shipped":1},{"vendorSku":"15-13578","qty":1,"cost":14.95,"shipped":1},{"vendorSku":"15-12670","qty":1,"cost":24.67,"shipped":1},{"vendorSku":"15-12676","qty":1,"cost":32.86,"shipped":1},{"vendorSku":"15-12044","qty":1,"cost":5.99,"shipped":1},{"vendorSku":"15-11617","qty":3,"cost":4.99,"shipped":3},{"vendorSku":"15-08583","qty":4,"cost":14.7,"shipped":4},{"vendorSku":"15-09405","qty":1,"cost":21.73,"shipped":1},{"vendorSku":"15-12338","qty":15,"cost":25.5,"shipped":15},{"vendorSku":"15-14290","qty":3,"cost":21.59,"shipped":3},{"vendorSku":"15-12840","qty":4,"cost":24.0,"shipped":4},{"vendorSku":"15-13236","qty":1,"cost":15.99,"shipped":1},{"vendorSku":"15-14658","qty":2,"cost":17.84,"shipped":2},{"vendorSku":"15-14699","qty":2,"cost":17.84,"shipped":2},{"vendorSku":"15-13379","qty":2,"cost":18.39,"shipped":2},{"vendorSku":"15-13422","qty":1,"cost":12.99,"shipped":1},{"vendorSku":"15-13416","qty":1,"cost":18.39,"shipped":1},{"vendorSku":"15-13445","qty":1,"cost":12.99,"shipped":1},{"vendorSku":"15-10147","qty":1,"cost":5.99,"shipped":1},{"vendorSku":"15-08912","qty":1,"cost":7.99,"shipped":1},{"vendorSku":"15-00664","qty":10,"cost":3.9,"shipped":10}],"shipping":0,"tax":94.61,"ordered":81,"value":1891.71},{"vendor":"Hitfar","ref":"95412","date":"3/3/2026","tracking":"PUROLATOR Air: 520358511167","lines":[{"vendorSku":"15-11388","qty":2,"cost":29.17,"shipped":2},{"vendorSku":"15-11389","qty":1,"cost":29.17,"shipped":1},{"vendorSku":"15-11384","qty":2,"cost":53.16,"shipped":2},{"vendorSku":"15-11411","qty":1,"cost":62.58,"shipped":1},{"vendorSku":"15-14220","qty":2,"cost":37.52,"shipped":2},{"vendorSku":"15-13963","qty":1,"cost":37.55,"shipped":1},{"vendorSku":"15-14870","qty":1,"cost":37.52,"shipped":1},{"vendorSku":"15-14863","qty":1,"cost":18.74,"shipped":1},{"vendorSku":"15-14819","qty":1,"cost":53.16,"shipped":1},{"vendorSku":"15-14761","qty":1,"cost":29.17,"shipped":1},{"vendorSku":"15-13333","qty":1,"cost":37.52,"shipped":1},{"vendorSku":"15-14445","qty":1,"cost":37.52,"shipped":1},{"vendorSku":"15-14444","qty":1,"cost":37.52,"shipped":1},{"vendorSku":"15-15464","qty":1,"cost":34.27,"shipped":1},{"vendorSku":"15-12338","qty":3,"cost":36.43,"shipped":3},{"vendorSku":"15-15449","qty":1,"cost":36.43,"shipped":1},{"vendorSku":"15-12339","qty":1,"cost":36.43,"shipped":1},{"vendorSku":"15-11644","qty":1,"cost":7.99,"shipped":1},{"vendorSku":"15-13578","qty":1,"cost":10.99,"shipped":1},{"vendorSku":"15-13236","qty":1,"cost":15.99,"shipped":1}],"shipping":0,"tax":43.6,"ordered":25,"value":871.54},{"vendor":"Cesium Telecom","ref":"SO-2000801","date":"3/2/2026","tracking":"","lines":[{"vendorSku":"120-8126","qty":1,"shipped":1,"cost":2.19},{"vendorSku":"120-9587","qty":1,"shipped":1,"cost":5.99},{"vendorSku":"150-1530","qty":3,"shipped":3,"cost":21.15},{"vendorSku":"120-10588","qty":2,"shipped":2,"cost":26.4},{"vendorSku":"120-10525","qty":1,"shipped":1,"cost":12.0},{"vendorSku":"120-10528","qty":1,"shipped":1,"cost":12.0},{"vendorSku":"120-10531","qty":1,"shipped":1,"cost":12.0},{"vendorSku":"120-10569","qty":1,"shipped":1,"cost":26.4},{"vendorSku":"120-10608","qty":2,"shipped":2,"cost":26.4},{"vendorSku":"115-2186","qty":3,"shipped":3,"cost":15.3},{"vendorSku":"120-10593","qty":1,"shipped":1,"cost":44.2},{"vendorSku":"120-10590","qty":1,"shipped":1,"cost":26.4},{"vendorSku":"120-10574","qty":1,"shipped":1,"cost":44.2},{"vendorSku":"120-10571","qty":1,"shipped":1,"cost":26.4},{"vendorSku":"120-10610","qty":1,"shipped":1,"cost":26.4},{"vendorSku":"120-10612","qty":1,"shipped":1,"cost":44.2},{"vendorSku":"150-1564","qty":2,"shipped":2,"cost":50.99},{"vendorSku":"120-8567","qty":1,"shipped":1,"cost":0.99},{"vendorSku":"120-8568","qty":1,"shipped":1,"cost":0.99},{"vendorSku":"120-9620","qty":1,"shipped":1,"cost":0.99},{"vendorSku":"120-9623","qty":1,"shipped":1,"cost":1.19},{"vendorSku":"105-1990","qty":2,"shipped":2,"cost":39.2},{"vendorSku":"105-1992","qty":1,"shipped":1,"cost":39.2},{"vendorSku":"105-1991","qty":1,"shipped":1,"cost":39.2},{"vendorSku":"105-1951","qty":2,"shipped":2,"cost":31.95},{"vendorSku":"105-2015","qty":2,"shipped":2,"cost":31.5},{"vendorSku":"105-1722","qty":4,"shipped":4,"cost":30.15},{"vendorSku":"105-1690","qty":1,"shipped":1,"cost":21.75},{"vendorSku":"105-1688","qty":1,"shipped":1,"cost":21.75},{"vendorSku":"105-1687","qty":3,"shipped":3,"cost":21.75},{"vendorSku":"105-1870","qty":3,"shipped":3,"cost":13.0},{"vendorSku":"105-1871","qty":3,"shipped":3,"cost":13.0}],"shipping":19.5,"tax":60.71,"ordered":51,"value":1194.52}],"sampleCsv":"Order #,Customer ID,Parent ID,PO Reference #,Purchased On,Customer Name,Company,Product SKU,Product Description,Unit Price,Quantity,Total,Payment Method,Status,Shipping City,Shipping State,Shipping Country,Shipping Zipcode,Tax Amount,Currency Code,Store Location ID,Customer Group,Tracking Number,Credit Card Fee\n\"401632626\",\"40155214\",\"\",\"\",\"10/09/2026\",\"Mohammed  Munawar\",\"Sparktech Electronics Hub Ltd.\",\"107183138936\",\"Back Glass w/ MagSafe Magnet For iPhone 15 (No Logo) (Aftermarket) (Black)\",\"29.52\",\"2.0000\",\"59.04\",\"Credit Card\",\"Shipped\",\"Victoria\",\"British Columbia\",\"CA\",\"V8W3M9\",\"6.77\",\"CAD\",\"\",\"Authorized\",\"'878462936140\"\n\"401632626\",\"40155214\",\"\",\"\",\"10/09/2026\",\"Mohammed  Munawar\",\"Sparktech Electronics Hub Ltd.\",\"107282228174\",\"Back Glass w/ MagSafe Magnet & NFC &\u00a0Flashlight\u00a0Flex For iPhone 15 (Used OEM Pull: Grade C) (Black)\",\"42.97\",\"1.0000\",\"42.97\",\"Credit Card\",\"Shipped\",\"Victoria\",\"British Columbia\",\"CA\",\"V8W3M9\",\"6.77\",\"CAD\",\"\",\"Authorized\",\"'878462936140\"\n\"401632626\",\"40155214\",\"\",\"\",\"10/09/2026\",\"Mohammed  Munawar\",\"Sparktech Electronics Hub Ltd.\",\"107089876551\",\"Flashlight Flex Cable For iPhone 15\",\"13.38\",\"1.0000\",\"13.38\",\"Credit Card\",\"Shipped\",\"Victoria\",\"British Columbia\",\"CA\",\"V8W3M9\",\"6.77\",\"CAD\",\"\",\"Authorized\",\"'878462936140\"\n\"401632626\",\"40155214\",\"\",\"\",\"10/09/2026\",\"Mohammed  Munawar\",\"Sparktech Electronics Hub Ltd.\",\"Shipping\",\"FedEx Standard Overnight\",\"\",\"\",\"20.00\",\"Credit Card\",\"Shipped\",\"Victoria\",\"British Columbia\",\"CA\",\"V8W3M9\",\"6.77\",\"CAD\",\"\",\"Authorized\",\"'878462936140\"\n\"401632644\",\"40155214\",\"\",\"\",\"10/09/2026\",\"Mohammed  Munawar\",\"Sparktech Electronics Hub Ltd.\",\"107082131164\",\"Replacement Battery For iPhone 15 (AmpSentrix Plus)\",\"22.81\",\"1.0000\",\"22.81\",\"Credit Card\",\"Shipped\",\"Victoria\",\"British Columbia\",\"CA\",\"V8W3M9\",\"2.09\",\"CAD\",\"\",\"Authorized\",\"'878462940978\"\n\"401632644\",\"40155214\",\"\",\"\",\"10/09/2026\",\"Mohammed  Munawar\",\"Sparktech Electronics Hub Ltd.\",\"107084001273\",\"Replacement Battery For Alcatel 1B (5002 / 2020) (TLi028C1 / TLi028C7)\",\"8.9\",\"1.0000\",\"8.9\",\"Credit Card\",\"Shipped\",\"Victoria\",\"British Columbia\",\"CA\",\"V8W3M9\",\"2.09\",\"CAD\",\"\",\"Authorized\",\"'878462940978\"\n\"401632644\",\"40155214\",\"\",\"\",\"10/09/2026\",\"Mohammed  Munawar\",\"Sparktech Electronics Hub Ltd.\",\"Shipping\",\"FedEx Ground\",\"\",\"\",\"10.00\",\"Credit Card\",\"Shipped\",\"Victoria\",\"British Columbia\",\"CA\",\"V8W3M9\",\"2.09\",\"CAD\",\"\",\"Authorized\",\"'878462940978\""};</script>
 <script>
 /* ============ Counterstock — core ============ */
-const KEY='counterstock.v1';
+const KEY='counterstock.v2';
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>(n<0?'−':'')+'$'+Math.abs(+n||0).toFixed(2);
@@ -272,7 +387,7 @@ function ean13(n){const base=('200'+String(n).padStart(9,'0')).slice(0,12);let s
 function sellPrice(cost,cat){const m={Screens:2.1,Batteries:2.6,'Back Glass':3,'Small Parts':3.5,Cases:1.75,'Cables & Chargers':2.6,'Audio & Accessories':1.7,Devices:1.18}[cat]||2;let p=cost*m;p=p<10?Math.ceil(p)-0.01:Math.ceil(p/5)*5-0.01;return r2(Math.max(p,4.99))}
 
 let S=null;
-function load(){try{const raw=localStorage.getItem(KEY);if(raw){S=JSON.parse(raw);if(S&&S.v===1)return}}catch(e){}S=seed();save(true)}
+function load(){try{const raw=localStorage.getItem(KEY);if(raw){S=JSON.parse(raw);if(S&&S.v===2)return}}catch(e){}S=seed();save(true)}
 function save(skipAlerts){if(!skipAlerts)syncAlerts();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
 /* ---- lookups ---- */
@@ -312,7 +427,7 @@ function shiftCash(sh){let cash=0,card=0,refunds=0;for(const s of S.sales)if(s.s
 /* ============ demo seed (built from the vendor files the client shared) ============ */
 function seed(){
   const R=rng(20261016), now=Date.now(), ri=(a,b)=>a+Math.floor(R()*(b-a+1)), pick=a=>a[Math.floor(R()*a.length)];
-  const D={v:1,stores:[
+  const D={v:2,stores:[
     {id:'s1',name:'Douglas St',address:'1150 Douglas St, Unit 219, Victoria BC V8W 3M9',phone:'778-869-4006'},
     {id:'s2',name:'Hillside Ave',address:'1644 Hillside Ave, Unit 124A, Victoria BC V8T 2C5',phone:'778-858-6588'},
     {id:'s3',name:'Victoria North',address:'Victoria BC V8P 1A4',phone:''},
@@ -358,17 +473,34 @@ function seed(){
     {id:'c1',name:'Jordan Lee',email:'jordan.lee@example.com',phone:'250-555-0142',nid:'BC-DL 7719042',credit:0,createdAt:now-12*DAY},
     {id:'c2',name:'Mei Chen',email:'mei.chen@example.com',phone:'250-555-0188',nid:'BC-DL 6623110',credit:0,createdAt:now-6*DAY},
     {id:'c3',name:'Lucas Martin',email:'lucas.m@example.com',phone:'604-555-0119',nid:'PP GA448812',credit:0,createdAt:now-3*DAY}];
-  // shifts + sales over the past 3 days
-  const staffBy={s1:['u3','u1'],s2:['u4','u2'],s3:['u6'],s4:['u5']};
-  for(let d=3;d>=1;d--){for(const s of D.stores){const u=staffBy[s.id][0];const open=now-d*DAY-ri(1,2)*36e5;const sh={id:uid('SH'),userId:u,storeId:s.id,openAt:open,opening:ri(2,6)*25/2*2,closeAt:null,expected:0,declared:0,note:''};D.shifts.push(sh);
-      L('SHIFT',`${U(u).name} opened shift with ${money(sh.opening)} opening balance`,{at:open,by:u,storeId:s.id});
-      const ids=Object.keys(D.stock[s.id]).filter(pid=>D.stock[s.id][pid]>1&&P(pid).category!=='Devices');
-      const k=ri(3,6);for(let j=0;j<k;j++){const pid=pick(ids);if(!pid||qty(s.id,pid)<1)continue;const p=P(pid);const q=1;const tot=p.price*q;const cash=R()<.45;const at=open+ri(1,7)*36e5;
-        const sale={id:'S'+(++D.seq.sale),storeId:s.id,at,by:u,shiftId:sh.id,items:[{pid,qty:q,price:p.price}],total:tot,pay:{cash:cash?tot:0,card:cash?0:tot,credit:0},customerId:null};D.sales.push(sale);addStock(s.id,pid,-q);
-        L('SALE',`Scanned out ${q} × ${p.name} — ${money(tot)} (${cash?'Cash':'Card'})`,{at,by:u,storeId:s.id,pid,ref:sale.id})}
-      const c=shiftCash(sh);sh.closeAt=open+9*36e5;sh.expected=r2(sh.opening+c.cash);sh.cashCollected=c.cash;sh.declared=c.cash;
-      if(d===2&&s.id==='s1'){sh.declared=r2(Math.max(0,c.cash-40));sh.note='Paid $40 cash to courier for urgent screen delivery (receipt in drawer)'}
-      L('SHIFT',`${U(u).name} closed shift — cash deposit ${money(sh.declared)}${sh.declared!==c.cash?` (system ${money(c.cash)}; note: ${sh.note})`:''}`,{at:sh.closeAt,by:u,storeId:s.id})}}
+  // 60 days of sales history so reports have real shape (weekday rhythm, busy afternoons)
+  const staffBy={s1:['u3','u1'],s2:['u4','u2'],s3:['u6'],s4:['u5']};const storeBase={s1:9,s2:8,s3:6,s4:5};
+  const HOURS=[10,11,11,12,12,12,13,13,14,14,15,15,16,16,16,17,17,18,19,20];
+  const notes={'2s1':['Paid $40 cash to courier for urgent screen delivery (receipt in drawer)',-40],'9s2':['$20 for cleaning supplies from the dollar store',-20],'16s4':['Short $5 — likely wrong change given',-5],'23s1':['Customer paid $10 extra for case, refunded next day',10]};
+  for(let d=100;d>=0;d--){const day=new Date(now-d*DAY);day.setHours(0,0,0,0);const dow=day.getDay();const wk=dow===6?1.4:dow===5?1.2:dow===0?0.65:1;
+   for(const s of D.stores){const u=staffBy[s.id][d%staffBy[s.id].length];const open=day.getTime()+9.5*36e5;if(open>now)continue;
+    const sh=d>0?{id:uid('SH'),userId:u,storeId:s.id,openAt:open,opening:25,closeAt:null,expected:0,declared:0,note:''}:null;if(sh)D.shifts.push(sh);
+    const ids=Object.keys(D.stock[s.id]);const k=Math.round(storeBase[s.id]*wk*(0.55+R()*0.9));
+    for(let j=0;j<k;j++){const at=day.getTime()+pick(HOURS)*36e5+ri(0,59)*6e4;if(at>now-5*6e4)continue;
+      const n=R()<.72?1:R()<.7?2:3;const items=[];for(let m=0;m<n;m++){const pid=pick(ids);const p=P(pid);if(!p||(p.category==='Devices'&&R()<.9))continue;const ex=items.find(i=>i.pid===pid);if(ex)ex.qty++;else items.push({pid,qty:1,price:p.price})}
+      if(!items.length)continue;const tot=r2(items.reduce((a,i)=>a+i.qty*i.price,0));const cash=R()<.42;
+      const sale={id:'S'+(++D.seq.sale),storeId:s.id,at,by:u,shiftId:sh?sh.id:null,items,total:tot,pay:{cash:cash?tot:0,card:cash?0:tot,credit:0},customerId:null};D.sales.push(sale);
+      if(d<=2)L('SALE',`Scanned out ${items.map(i=>i.qty+' × '+P(i.pid).name).join(', ')} — ${money(tot)} (${cash?'Cash':'Card'})`,{at,by:u,storeId:s.id,pid:items[0].pid,ref:sale.id})}
+    if(sh){const c=shiftCash(sh);sh.closeAt=open+9.5*36e5;sh.expected=r2(sh.opening+c.cash);sh.cashCollected=c.cash;sh.declared=c.cash;const nt=notes[d+s.id];
+      if(nt){sh.declared=r2(Math.max(0,c.cash+nt[1]));sh.note=nt[0]}
+      if(d<=3){L('SHIFT',`${U(u).name} opened shift with ${money(sh.opening)} opening balance`,{at:open,by:u,storeId:s.id});L('SHIFT',`${U(u).name} closed shift — cash deposit ${money(sh.declared)}${sh.note?` (system ${money(c.cash)}; note: ${sh.note})`:''}`,{at:sh.closeAt,by:u,storeId:s.id})}}}}
+  D.customers.push(
+    {id:'c4',name:'Priyanka Rao',email:'priyanka.r@example.com',phone:'250-555-0193',nid:'BC-DL 5512870',credit:0,createdAt:now-50*DAY},
+    {id:'c5',name:'Ethan Brooks',email:'ethan.b@example.com',phone:'250-555-0127',nid:'BCSC 9918273',credit:0,createdAt:now-44*DAY},
+    {id:'c6',name:'Amira Haddad',email:'amira.h@example.com',phone:'604-555-0175',nid:'PP HB220931',credit:0,createdAt:now-30*DAY},
+    {id:'c7',name:'Noah Fischer',email:'noah.f@example.com',phone:'250-555-0166',nid:'BC-DL 3301456',credit:0,createdAt:now-21*DAY});
+  // returns spread over the period; some credit later used on a sale
+  for(let i=0;i<9;i++){const sid=pick(['s1','s2','s3','s4']);const cid=pick(['c4','c5','c6','c7','c1','c3']);const ids=Object.keys(D.stock[sid]).filter(pid=>P(pid).category!=='Devices');const p=P(pick(ids));const at=now-ri(4,55)*DAY+ri(11,18)*36e5;const by=staffBy[sid][0];
+    const good=R()<.6;const r={id:uid('R'),receipt:'CR-'+(++D.seq.receipt),storeId:sid,at,by,customerId:cid,items:[{pid:p.id,value:p.price,condition:good?'resell':'faulty',restock:good,note:good?'Changed mind / wrong model':'Not working'}],exch:[],adjust:0,adjustNote:'',net:p.price,collected:null};
+    D.returns.push(r);D.credits.push({id:uid('CL'),customerId:cid,at,storeId:sid,by,type:'return',amount:p.price,ref:r.receipt,note:'Returned '+p.name});
+    L('RETURN',`Return ${r.receipt}: ${p.name} — ${money(p.price)} store credit${good?', item restocked':', faulty'}`,{at,by,storeId:sid,pid:p.id,ref:r.receipt});
+    if(i%2===0){const at2=at+ri(2,6)*DAY;if(at2<now){const q=D.products.find(x=>x.category==='Cases'&&x.price>=p.price*0.6)||p;const use=Math.min(p.price,q.price);const sale={id:'S'+(++D.seq.sale),storeId:sid,at:at2,by,shiftId:null,items:[{pid:q.id,qty:1,price:q.price}],total:q.price,pay:{cash:0,card:r2(q.price-use),credit:use},customerId:cid};D.sales.push(sale);
+      D.credits.push({id:uid('CL'),customerId:cid,at:at2,storeId:sid,by,type:'redeem',amount:-use,ref:sale.id,note:'Used on sale '+sale.id})}}}
   // the return + exchange example from the brief: bought for $500, took a $200 item, keeps $300 credit
   const dev=D.products.find(p=>/Galaxy S25 Ultra 256/.test(p.name));
   const caseP=D.products.find(p=>/S25 Ultra Otterbox Commuter Series Case - Black/.test(p.name))||D.products.find(p=>p.category==='Cases');
@@ -385,7 +517,7 @@ function seed(){
   // repairs across the pipeline
   const rp=(sid,cust,phone,device,dmg,desc,status,ago,extra={})=>{const id='RP-'+(++D.seq.repair);const at=now-ago*DAY;const by=staffBy[sid][0];
     const r={id,storeId:sid,customer:cust,phone,device,imei:String(35)+ri(1e6,9e6)+ri(1e6,9e6),damage:dmg,desc,status:'intake',createdAt:at,by,expected:null,tech:'u7',complexity:'',repairCost:null,shipCost:null,techNotes:'',history:[{at,by,status:'intake',note:'Checked in at counter'}],...extra};
-    const flow=['intake','dispatch','tech',status==='notfix'?'notfix':'fixed','returned','collected'];const stop=flow.indexOf(status);
+    const flow=['intake','dispatch','tech',(status==='notfix'||extra.bad)?'notfix':'fixed','returned','collected'];const stop=flow.indexOf(status);
     for(let i=1;i<=stop;i++){const t=at+i*DAY*.7;const st=flow[i];r.history.push({at:t,by:['tech','fixed','notfix'].includes(st)?'u7':by,status:st,note:st==='dispatch'?'Cannot be repaired in shop — board level':''});r.status=st;if(st==='dispatch')r.expected=isoD(at+4*DAY)}
     D.repairs.push(r);L('REPAIR',`${id} ${device}: ${REPAIR_LABEL[r.status]}`,{at:r.history.at(-1).at,by:r.history.at(-1).by,storeId:sid,ref:id});return r};
   rp('s1','Ana Duarte','250-555-0170','iPhone 15 Pro',['No power / board'],'No power after drop. Not taking charge.','dispatch',1,{});
@@ -394,6 +526,9 @@ function seed(){
   rp('s3','Hana Ito','250-555-0109','Google Pixel 8 Pro',['Charging port'],'Charges only at an angle.','fixed',5,{complexity:'Moderate',repairCost:45,shipCost:12,techNotes:'Port replaced, tested 30 min'});
   rp('s1','Victor Hale','250-555-0124','iPhone 12',['No power / board'],'Board short after liquid damage.','notfix',8,{complexity:'Complex',repairCost:0,shipCost:12,techNotes:'CPU area corroded, not repairable'});
   rp('s2','Leah Brooks','250-555-0156','iPhone 13 Pro',['Speaker / mic'],'No sound on calls.','collected',12,{complexity:'Simple',repairCost:30,shipCost:12,techNotes:'Earpiece flex reseated + cleaned'});
+  const devs=['iPhone 13','iPhone 14 Pro','Samsung Galaxy S23','iPhone 12 Pro Max','Google Pixel 7','iPhone 15','Samsung Galaxy A54','iPhone 11','Motorola G Power','iPhone 14'];
+  for(let i=0;i<14;i++){const sid=pick(['s1','s2','s3','s4']);const bad=R()<.2;const dm=pick([['Screen / display'],['Battery'],['Charging port'],['No power / board'],['Back glass'],['Camera'],['Water damage','No power / board'],['Speaker / mic']]);
+    rp(sid,pick(['Kai Morgan','Lena Ortiz','Raj Mehta','Zoe Carter','Omar Siddiqui','Grace Liu','Ben Walsh','Sara Kim']),'250-555-01'+ri(10,99),pick(devs),dm,'Customer reports: '+dm.join(', ').toLowerCase()+'.','collected',ri(10,58),{bad,complexity:pick(['Simple','Moderate','Complex']),repairCost:bad?0:ri(3,12)*10,shipCost:12,techNotes:bad?'Board damage beyond repair':'Repaired and tested'})}
   // a pending store exchange (iPhone 17 Pro Max missing at Douglas St, available at Hillside)
   const ip=D.products.find(p=>/17 Pro Max 256/.test(p.name));
   D.transfers.push({id:'TR-'+(++D.seq.transfer),from:'s2',to:'s1',items:[{pid:ip.id,qty:1}],status:'requested',by:'u3',at:now-3*36e5,note:'Customer waiting — wants it today',history:[{at:now-3*36e5,by:'u3',status:'requested'}]});
@@ -465,19 +600,20 @@ function showReceipt(o){modal(o.title,receiptHTML(o)+(FRAMED?`<div class="note i
 
 /* ---- navigation ---- */
 const NAV=[
- ['Daily work',[['dash','Dashboard','home'],['pos','Sell / Scan out','scan'],['returns','Returns & exchange','undo'],['repairs','Repairs','tool'],['exchange','Store exchange','swap']]],
- ['Stock',[['products','Products & labels','box'],['receive','Receive stock','inbox'],['batches','Receiving history','truck'],['alerts','Inventory alerts','bell']]],
- ['Records',[['customers','Customers & credit','user'],['shifts','Shifts & cash','cash'],['log','Activity log','list']]],
- ['Admin',[['admin','Stores & users','store']]],
- ['Technician',[['tech','Technician panel','tool']]],
- ['Help',[['guide','Daily guide','book']]]];
-const ACCESS={super:['dash','pos','returns','repairs','exchange','products','receive','batches','alerts','customers','shifts','log','admin','guide'],
- admin:['dash','pos','returns','repairs','exchange','products','receive','batches','alerts','customers','shifts','log','admin','guide'],
- staff:['pos','returns','repairs','exchange','products','receive','batches','alerts','customers','shifts','log','guide'],
+ ['',[['home','Home','grid'],['dash','Dashboard','chart']]],
+ ['Sell',[['pos','Register','scan'],['returns','Returns & exchange','undo'],['customers','Customers & credit','user']]],
+ ['Inventory',[['products','Products & labels','box'],['receive','Receive stock','inbox'],['alerts','Low stock alerts','bell'],['exchange','Store exchange','swap'],['batches','Receiving history','truck']]],
+ ['Service',[['repairs','Repairs','tool'],['tech','Technician panel','tool']]],
+ ['Records',[['shifts','Shifts & cash','cash'],['log','Activity log','list']]],
+ ['Settings',[['admin','Stores & users','store'],['guide','Help & daily guide','book']]]];
+const ACCESS={super:['dash','home','pos','returns','customers','products','receive','alerts','exchange','batches','repairs','shifts','log','admin','guide'],
+ admin:['dash','home','pos','returns','customers','products','receive','alerts','exchange','batches','repairs','shifts','log','admin','guide'],
+ staff:['home','pos','returns','customers','products','receive','alerts','exchange','batches','repairs','shifts','log','guide'],
  tech:['tech','guide']};
 const can=v=>ACCESS[me().role].includes(v);
 const isMgr=()=>['super','admin'].includes(me().role);
 function go(v){UI.view=v;UI.navOpen=false;render();window.scrollTo(0,0)}
+const initials=n=>n.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase();
 
 function render(){const app=$('#app');
   if(!S.session){app.innerHTML=loginView();drawCodes(app);return}
@@ -486,26 +622,27 @@ function render(){const app=$('#app');
   const pendingTr=S.transfers.filter(t=>t.status==='requested'&&(sid==='all'||t.from===sid)).length;
   const navCount={alerts:alertN,exchange:pendingTr,tech:S.repairs.filter(r=>r.status==='dispatch').length};
   app.innerHTML=`<div class="shell ${UI.navOpen?'nav-open':''}">
-  <aside class="side" aria-label="Main menu"><div class="brand"><div class="brand-mark"><i></i></div><div><b>Counterstock</b><small>Sparktech Hub · ${S.stores.length} stores</small></div></div>
-   <nav class="nav">${NAV.map(([h,items])=>{const vis=items.filter(i=>can(i[0]));if(!vis.length)return'';return `<div class="nav-h">${h}</div>`+vis.map(([id,t,icn])=>`<button class="${UI.view===id?'on':''}" data-act="go" data-v="${id}">${ic(icn)}<span>${t}</span>${navCount[id]?`<span class="cnt">${navCount[id]}</span>`:''}</button>`).join('')}).join('')}</nav>
-   <div class="side-foot">Signed in as <b style="color:var(--side-hi)">${esc(u.name)}</b><br>${ROLE_NAME[u.role]}${u.storeId?' · '+esc(ST(u.storeId).name):''}<br><button data-act="logout">Switch user</button></div></aside>
+  <aside class="side" aria-label="Main menu"><div class="brand"><div class="brand-mark"><i></i></div><div><b>Counterstock</b><small>Sparktech Hub</small></div></div>
+   <nav class="nav">${NAV.map(([h,items])=>{const vis=items.filter(i=>can(i[0]));if(!vis.length)return'';return (h?`<div class="nav-h">${h}</div>`:'')+vis.map(([id,t,icn])=>`<button class="${UI.view===id?'on':''}" data-act="go" data-v="${id}">${ic(icn)}<span>${t}</span>${navCount[id]?`<span class="cnt">${navCount[id]}</span>`:''}</button>`).join('')}).join('')}</nav>
+   <div class="side-foot"><div class="avatar">${esc(initials(u.name))}</div><div class="who"><b>${esc(u.name)}</b>${ROLE_NAME[u.role]}${u.storeId?' · '+esc(ST(u.storeId).name):''}<br><button data-act="logout">Switch user</button></div></div></aside>
   <div class="main"><header class="top">
    <button class="btn sm menu-btn" data-act="toggleNav" aria-label="Open menu">${ic('menu')}</button>
-   ${u.role==='super'?`<label class="row small" style="gap:6px"><span class="muted tip-b" data-tip="Super Admin can look at every store at once or step into one store to work its till.">Store</span><select class="in" style="width:auto;padding:5px 8px" id="storePick" data-on="pickStore"><option value="all" ${sid==='all'?'selected':''}>All stores</option>${S.stores.map(s=>`<option value="${s.id}" ${sid===s.id?'selected':''}>${esc(s.name)}</option>`).join('')}</select></label>`:u.role==='tech'?`<b>${ic('truck').replace('<svg','<svg style="width:16px;vertical-align:-3px"')} Field technician — all shops</b>`:`<b>${esc(ST(sid).name)}</b>`}
+   ${u.role==='super'?`<label class="store-chip">${ic('store')}<select class="in" style="width:auto;font-weight:700" id="storePick" data-on="pickStore" aria-label="Store"><option value="all" ${sid==='all'?'selected':''}>All stores</option>${S.stores.map(s=>`<option value="${s.id}" ${sid===s.id?'selected':''}>${esc(s.name)}</option>`).join('')}</select></label>`:u.role==='tech'?`<span class="store-chip">${ic('truck')} All shops</span>`:`<span class="store-chip">${ic('store')} ${esc(ST(sid).name)}</span>`}
+   ${u.role!=='tech'?`<div class="gsearch">${ic('search')}<input class="in" id="gq" placeholder="Search products, customers, repairs…" autocomplete="off" data-on="gsearch" aria-label="Search everything"><div class="gres" id="gres" hidden></div></div>`:''}
    <span class="grow"></span>
-   ${u.role!=='tech'&&sid!=='all'?(sh?`<span class="pill ok tip-b" data-tip="Opening balance ${money(sh.opening)}. Cash taken so far this shift: ${money(shiftCash(sh).cash)}."><span class="dot"></span>Shift open · since ${new Date(sh.openAt).toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})}</span><button class="btn sm tip-b" data-act="endShift" data-tip="Count the drawer and hand over the cash deposit.">End shift</button>`:`<span class="pill warn">No open shift</span><button class="btn sm pri" data-act="startShift">Start shift</button>`):''}
-   ${u.role!=='tech'?`<button class="btn sm ghost tip-b" data-act="go" data-v="alerts" data-tip="Products or categories at or below their minimum stock">${ic('bell')} <span class="num">${alertN}</span></button>`:''}
+   ${u.role!=='tech'&&sid!=='all'?(sh?`<span class="pill ok tip-b" data-tip="Opening balance ${money(sh.opening)}. Cash taken so far this shift: ${money(shiftCash(sh).cash)}."><span class="dot"></span>Shift open</span><button class="btn sm" data-act="endShift">End shift</button>`:`<button class="btn sm pri" data-act="startShift">Start shift</button>`):''}
+   ${u.role!=='tech'?`<button class="btn sm ghost tip-b tip-l" data-act="go" data-v="alerts" data-tip="Products at or below their alert level" aria-label="Low stock alerts">${ic('bell')} <span class="num">${alertN}</span></button>`:''}
   </header><main class="content" id="view">${VIEWS[UI.view]()}</main></div></div>`;
   drawCodes(app)}
 
-function needStore(){return `<div class="card card-b"><h2>Choose a store first</h2><p class="muted">This screen works on one store's till and stock. Pick the store you are working in.</p><div class="row">${S.stores.map(s=>`<button class="btn" data-act="setStore" data-s="${s.id}">${ic('store')} ${esc(s.name)}</button>`).join('')}</div></div>`}
+function needStore(){return `<div class="card card-b stack"><h2>Which store are you working in?</h2><p class="muted" style="margin:0">This screen works on one store's till and stock.</p><div class="tiles" style="margin:0">${S.stores.map(s=>`<button class="tile" data-act="setStore" data-s="${s.id}"><div class="ti">${ic('store')}</div><div><b>${esc(s.name)}</b><br><span>${esc(s.address)}</span></div></button>`).join('')}</div></div>`}
 
 /* ---- login + shift ---- */
 function loginView(){const groups=[['super','Owner'],['admin','Store admins'],['staff','Staff'],['tech','Technician']];
- return `<div class="login"><div class="login-card"><div class="login-hero"><div class="brand-mark" style="width:44px;height:44px"><i></i></div><div><h1>Counterstock</h1><div class="muted">Inventory, sales, returns and repairs for Sparktech Hub's ${S.stores.length} stores</div></div></div>
- <div class="note info" style="margin-bottom:16px">Prototype with sample accounts. Pick who you want to sign in as; each role sees a different set of screens. In the real build this is an email + PIN login. Products and vendor orders are loaded from the supplier files you shared; staff, customers, sales and repairs are made-up examples.</div>
- ${groups.map(([r,h])=>`<h3 style="margin:16px 0 8px">${h} ${tip({super:'Sees and manages every store. Creates stores, admins and staff.',admin:'Runs one store: stock, staff, shifts, reports.',staff:'Counter work: selling, receiving, returns, repairs intake.',tech:'Separate panel: pickups from every shop, repair costs, delivery dates.'}[r])}</h3><div class="acct">${S.users.filter(u=>u.role===r&&u.active).map(u=>`<button data-act="login" data-u="${u.id}"><b>${esc(u.name)}</b><span class="small muted">${ROLE_NAME[u.role]}${u.storeId?' · '+esc(ST(u.storeId).name):''}</span></button>`).join('')}</div>`).join('')}
- <p class="small muted" style="margin-top:22px">Data in this prototype is saved in this browser only. <button class="btn sm ghost" data-act="resetAsk">Reset demo data</button></p></div></div>`}
+ return `<div class="login"><div class="login-side"><div class="brand-mark"><i></i></div><h1>Counterstock</h1><p>Sales, stock, returns and repairs for all ${S.stores.length} Sparktech Hub stores in one place.</p><ul><li>Scan to sell, cash or card</li><li>Upload deliveries and print labels</li><li>Store credit that follows the customer</li><li>Reports by date, store and staff</li></ul></div>
+ <div class="login-main"><h2 style="font-size:22px">Who's signing in?</h2><p class="muted" style="margin:4px 0 18px">Tap your name. This prototype skips the PIN; the real system asks for one.</p>
+ ${groups.map(([r,h])=>`<h3 style="margin:18px 0 10px" class="muted">${h}</h3><div class="acct">${S.users.filter(u=>u.role===r&&u.active).map(u=>`<button data-act="login" data-u="${u.id}"><span class="avatar">${esc(initials(u.name))}</span><span><b>${esc(u.name)}</b><span class="small muted">${ROLE_NAME[u.role]}${u.storeId?' · '+esc(ST(u.storeId).name):''}</span></span></button>`).join('')}</div>`).join('')}
+ <div class="note info small" style="margin-top:24px">Products and vendor orders come from the supplier files you shared. Staff, customers, sales and repairs are sample data. Everything is saved in this browser only. <button class="btn sm ghost" data-act="resetAsk">Reset demo data</button></div></div></div>`}
 function shiftOpenModal(force){const last=S.shifts.filter(x=>x.storeId===curStore()&&x.closeAt).sort((a,b)=>b.closeAt-a.closeAt)[0];
  modal('Start your shift',`<p>Count the cash in the drawer before you serve the first customer and enter it below. This is your <b>opening balance</b>; the system adds every cash sale to it during your shift.</p>
  <label class="field"><span>Opening balance (cash in drawer) ${tip('Float left in the till for change. Usually the same every day, e.g. $25.')}</span><input class="in num" id="opening" type="number" step="0.01" min="0" value="${last?Math.min(25,last.declared).toFixed(2):'25.00'}" autofocus></label>
@@ -526,50 +663,6 @@ const inStore=(x,sid,key='storeId')=>sid==='all'||x[key]===sid;
 function logRows(list,limit=12){if(!list.length)return `<div class="empty">Nothing recorded yet.</div>`;
  return `<ul class="tl">${list.slice(0,limit).map(l=>`<li><div class="small muted num">${fmtDT(l.at)}</div><div><span class="tag ${l.type}">${l.type}</span> ${esc(l.msg)}<div class="small muted">${esc(U(l.by).name)}${l.storeId&&l.storeId!=='all'?' · '+esc(ST(l.storeId).name):''}</div></div></li>`).join('')}</ul>`}
 function sampleChips(sid,n=5){const ids=Object.keys(S.stock[sid]||{}).filter(pid=>qty(sid,pid)>0).slice(0,n);return `<div class="scan-hint"><span class="muted">No scanner handy? Try:</span>${ids.map(pid=>`<button class="chip" data-act="chip" data-code="${P(pid).ean}" data-tip="${esc(P(pid).name)}">${P(pid).ean}</button>`).join('')}</div>`}
-
-/* ---- Dashboard ---- */
-VIEWS.dash=()=>{const sid=curStore(),t0=today0();const sales=S.sales.filter(s=>inStore(s,sid)&&s.at>=t0-0);const wk=S.sales.filter(s=>inStore(s,sid)&&s.at>=Date.now()-7*DAY);
- const sum=(a,k)=>r2(a.reduce((x,s)=>x+s.pay[k],0));const alerts=computeAlerts(sid);
- const openRep=S.repairs.filter(r=>inStore(r,sid)&&!['collected'].includes(r.status));
- const disc=S.batches.filter(b=>inStore(b,sid)).flatMap(b=>b.lines.filter(l=>l.received!==l.ordered).map(l=>({b,l})));
- const storeRows=S.stores.map(s=>{const ss=S.sales.filter(x=>x.storeId===s.id&&x.at>=Date.now()-7*DAY);const sh=S.shifts.find(x=>x.storeId===s.id&&!x.closeAt);
-   return `<tr class="click" data-act="setStore" data-s="${s.id}"><td><b>${esc(s.name)}</b><div class="small muted">${esc(s.address)}</div></td><td class="right num">${money(sum(ss,'cash'))}</td><td class="right num">${money(sum(ss,'card'))}</td><td class="right num">${Object.values(S.stock[s.id]||{}).reduce((a,b)=>a+b,0)}</td><td>${computeAlerts(s.id).length?pill(computeAlerts(s.id).length+(computeAlerts(s.id).length===1?' alert':' alerts'),'dan'):pill('OK','ok')}</td><td class="num">${S.repairs.filter(r=>r.storeId===s.id&&r.status!=='collected').length}</td><td>${sh?pill(U(sh.userId).name,'ok'):pill('Closed')}</td></tr>`}).join('');
- return `<div class="page-h"><div><h1>${sid==='all'?'All stores':esc(ST(sid).name)} overview</h1><p>${sid==='all'?'Every shop at a glance. Click a store row to step into it.':'Today at this store, plus what needs attention.'}</p></div>
- <div class="row"><button class="btn" data-act="go" data-v="receive">${ic('inbox')} Receive stock</button><button class="btn pri" data-act="go" data-v="pos">${ic('scan')} Sell / Scan out</button></div></div>
- <div class="kpis"><div class="kpi"><div class="k">Sales last 7 days</div><div class="v">${money(sum(wk,'cash')+sum(wk,'card'))}</div><div class="s">${wk.length} scan-outs</div></div>
-  <div class="kpi"><div class="k">Cash · Card (7 days)</div><div class="v" style="font-size:20px">${money(sum(wk,'cash'))} · ${money(sum(wk,'card'))}</div><div class="s">cash deposit vs card pay</div></div>
-  <div class="kpi" data-tip="Products at or below their alert level, plus categories under their minimum."><div class="k">Inventory alerts</div><div class="v" style="color:${alerts.length?'var(--danger)':'var(--ok)'}">${alerts.length}</div><div class="s">clear automatically when restocked</div></div>
-  <div class="kpi"><div class="k">Repairs in progress</div><div class="v">${openRep.length}</div><div class="s">${openRep.filter(r=>r.status==='dispatch').length} waiting for technician pickup</div></div></div>
- ${sid==='all'?`<div class="card" style="margin-bottom:16px"><div class="card-h"><h2>Stores</h2><span class="small muted">last 7 days</span></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Store</th><th class="right">Cash</th><th class="right">Card</th><th class="right">Units on hand</th><th>Alerts</th><th>Repairs</th><th>Shift</th></tr></thead><tbody>${storeRows}</tbody></table></div></div>`:''}
- <div class="cols"><div class="card"><div class="card-h"><h2>Recent activity</h2><button class="btn sm" data-act="go" data-v="log">Full log</button></div><div class="card-b">${logRows(S.log.filter(l=>inStore(l,sid)&&l.type!=='ALERT'),10)}</div></div>
- <div class="stack"><div class="card"><div class="card-h"><h2>Low stock</h2><button class="btn sm" data-act="go" data-v="alerts">All alerts</button></div><div class="card-b">${alerts.length?`<ul class="tl">${alerts.slice(0,6).map(a=>`<li><div>${pill(a.kind==='category'?'Category':'Product',a.q===0?'dan':'warn')}</div><div>${a.kind==='product'?`<a href="#" data-act="openProduct" data-p="${a.pid}">${esc(a.p.name)}</a>`:esc(a.cat)} <div class="small muted">${a.q} left · ${esc(ST(a.sid).name)}</div></div></li>`).join('')}</ul>`:'<div class="empty">All stocked up.</div>'}</div></div>
- <div class="card"><div class="card-h"><h2>Ordered vs received</h2>${tip('Lines where the vendor delivered a different quantity than invoiced. Use these when claiming credits from the vendor.')}</div><div class="card-b">${disc.length?`<ul class="tl">${disc.slice(0,5).map(({b,l})=>`<li><div class="small num">${esc(b.vendor.split(' ')[0])} ${esc(b.ref)}</div><div>${esc(P(l.pid).name)}<div class="small"><span class="diff-neg">ordered ${l.ordered}, received ${l.received}</span> · ${esc(l.reason||'')}</div></div></li>`).join('')}</ul>`:'<div class="empty">No shortages recorded.</div>'}</div></div></div></div>`};
-
-/* ---- POS / Scan out ---- */
-VIEWS.pos=()=>{const sid=curStore();if(sid==='all')return needStore();const sh=openShift();
- const cart=UI.cart,sub=r2(cart.reduce((a,l)=>a+l.price*l.qty,0));const cust=UI.cartCust&&C(UI.cartCust);const credit=cust?Math.min(cust.credit,sub):0;const useCredit=UI.useCredit&&credit>0?credit:0;const due=r2(sub-useCredit);
- const hit=UI.lastHit&&P(UI.lastHit);
- const today=S.sales.filter(s=>s.storeId===sid&&s.at>=today0()).sort((a,b)=>b.at-a.at);
- return `<div class="page-h"><div><h1>Sell / Scan out</h1><p>Scan each item the customer is buying. Every scan-out takes the unit off this store's stock and is written to the activity log under your name.</p></div></div>
- ${howto('How to make a sale',['Click into the scan box (it is focused automatically) and scan the label on the product. A USB or Bluetooth scanner types the code and presses Enter for you.','Check the product details that appear: name, model, price and how many are left in this store.','Scan more items, or change quantities in the cart.','Optional: attach a customer to use their store credit.','Tick <b>Cash deposit</b> or <b>Card pay</b>. Tick both if the customer splits the payment, then enter the cash part.','Press <b>Complete sale</b>. The receipt opens and the sale appears under "Today\'s scan-outs".'],!S.sales.some(s=>s.by===me().id))}
- ${!sh?`<div class="note" style="margin-bottom:14px">You have no open shift. Start one so cash sales are counted toward your cash deposit. <button class="btn sm pri" data-act="startShift">Start shift</button></div>`:''}
- <div class="cols"><div class="stack">
-  <div class="card card-b"><label class="lbl" for="scanIn">Scan or type a barcode, SKU or MPN ${tip('Accepts the in-store EAN label, the vendor SKU (e.g. 107082022456), the Hitfar MPN (e.g. 77-92605) or the UPC.')}</label>
-   <form class="scan" data-form="scanSell" style="margin-top:6px"><input class="in" id="scanIn" autocomplete="off" placeholder="Scan here…" autofocus><button class="btn pri">Add</button></form>
-   ${sampleChips(sid)}
-   ${UI.scanErr?`<div class="note dan" style="margin-top:10px">${esc(UI.scanErr)}</div>`:''}
-   ${hit?`<div class="prod-hit"><div><div class="small muted">Last scanned</div><h3>${esc(hit.name)}</h3><dl class="kv" style="margin-top:6px"><dt>Model</dt><dd>${esc(hit.model||'—')}</dd><dt>Category</dt><dd>${esc(hit.category)}</dd><dt>Vendor SKU</dt><dd class="mono">${esc(hit.vendorSku)}</dd><dt>In this store</dt><dd><b>${qty(sid,hit.id)}</b> left ${qty(sid,hit.id)<=0?pill('Out of stock','dan'):qty(sid,hit.id)<=threshold(hit)?pill('Low','warn'):''}</dd></dl></div><div class="right"><div style="font-family:var(--f-head);font-size:26px;font-weight:600">${money(hit.price)}</div><button class="btn sm" data-act="openProduct" data-p="${hit.id}" style="margin-top:8px">Details</button></div></div>`:''}
-  </div>
-  <div class="card"><div class="card-h"><h2>Today's scan-outs</h2><span class="small muted">${today.length} sales · ${money(today.reduce((a,s)=>a+s.total,0))}</span></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Time</th><th>Items</th><th>Paid by</th><th class="right">Total</th><th>Staff</th></tr></thead><tbody>${today.length?today.map(s=>`<tr class="click" data-act="saleReceipt" data-s="${s.id}"><td class="num">${new Date(s.at).toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})}</td><td class="wrap">${s.items.map(i=>`${i.qty} × ${esc(P(i.pid).name)}`).join('<br>')}</td><td>${[s.pay.cash?pill('Cash','acc'):'',s.pay.card?pill('Card','info'):'',s.pay.credit?pill('Credit','warn'):''].join(' ')}</td><td class="right num">${money(s.total)}</td><td>${esc(U(s.by).name)}</td></tr>`).join(''):`<tr><td colspan="5" class="empty">No sales yet today.</td></tr>`}</tbody></table></div></div>
- </div>
- <div class="card" style="position:sticky;top:76px"><div class="card-h"><h2>Cart</h2>${cart.length?`<button class="btn sm ghost" data-act="clearCart">Clear</button>`:''}</div><div class="card-b stack">
-  ${cart.length?`<div class="stack" style="gap:8px">${cart.map((l,i)=>{const p=P(l.pid);const left=qty(sid,l.pid);return `<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;padding-bottom:8px;border-bottom:1px solid var(--line)"><div><div style="font-weight:500">${esc(p.name)}</div><div class="small muted">${money(l.price)} each · ${left} in stock${l.qty>left?' · <span class="diff-neg">more than in stock</span>':''}</div></div><div class="right"><div class="qty"><button data-act="cartQty" data-i="${i}" data-d="-1" aria-label="Less">−</button><span>${l.qty}</span><button data-act="cartQty" data-i="${i}" data-d="1" aria-label="More">+</button></div><div class="num" style="font-weight:600;margin-top:4px">${money(l.price*l.qty)}</div></div></div>`}).join('')}</div>`:'<div class="empty">Scan a product to start.</div>'}
-  <div class="field"><span>Customer (optional) ${tip('Search by phone, email or national ID to apply store credit from an earlier return.')}</span>${cust?`<div class="row" style="justify-content:space-between"><div><b>${esc(cust.name)}</b><div class="small muted">Credit balance ${money(cust.credit)}</div></div><button class="btn sm ghost" data-act="cartCust" data-c="">Remove</button></div>${cust.credit>0?`<label class="check"><input type="checkbox" id="useCredit" data-on="useCredit" ${UI.useCredit?'checked':''}> Use store credit (${money(credit)})</label>`:''}`:`<div class="row" style="flex-wrap:nowrap"><input class="in" id="custQ" placeholder="Phone, email or ID" data-on="custSearch"><button class="btn" data-act="newCustomer" data-for="pos">New</button></div><div id="custRes"></div>`}</div>
-  <div><div class="total-line"><span class="muted">Subtotal</span><span class="num">${money(sub)}</span></div>${useCredit?`<div class="total-line"><span class="muted">Store credit</span><span class="num">−${money(useCredit)}</span></div>`:''}<div class="total-line big"><span>To pay</span><span class="num">${money(due)}</span></div></div>
-  <div class="field"><span>Payment ${tip('Tick one. Tick both when the customer pays part cash, part card.')}</span><div class="paybox"><label><input type="checkbox" id="payCash" data-on="payTick" ${UI.payCash?'checked':''}> Cash deposit</label><label><input type="checkbox" id="payCard" data-on="payTick" ${UI.payCard?'checked':''}> Card pay</label></div></div>
-  ${UI.payCash&&UI.payCard?`<label class="field"><span>Cash part</span><input class="in num" id="cashPart" type="number" step="0.01" min="0" max="${due}" value="${(+(UI.cashPart??due/2)).toFixed(2)}" data-on="cashPart"><span class="small muted">Card part: ${money(due-(+(UI.cashPart??due/2)||0))}</span></label>`:''}
-  <button class="btn pri lg" data-act="completeSale" ${!cart.length?'disabled':''}>Complete sale · ${money(due)}</button>
- </div></div></div>`};
 
 /* ---- Products ---- */
 function productRows(){const sid=curStore();const q=UI.q.toLowerCase().trim();const words=q.split(/\s+/).filter(Boolean);
@@ -696,9 +789,9 @@ function confirmImport(){const I=UI.imp,sid=curStore();if(I.lines.some(l=>l.rec!
  if(pr&&labelItems.length)openLabels(labelItems,'receive')}
 
 /* ---- Receiving history ---- */
-VIEWS.batches=()=>{const sid=curStore();const list=S.batches.filter(b=>inStore(b,sid)).sort((a,b)=>b.at-a.at);
+VIEWS.batches=()=>{const sid=curStore();const list=S.batches.filter(b=>inStore(b,sid)&&inRange('batches',b.at)).sort((a,b)=>b.at-a.at);
  return `<div class="page-h"><div><h1>Receiving history</h1><p>Every delivery uploaded into ${sid==='all'?'any store':esc(ST(sid).name)}: who uploaded it, which file, and ordered vs received. Open one to record a late (backordered) arrival.</p></div><button class="btn pri" data-act="go" data-v="receive">${ic('inbox')} Receive stock</button></div>
- <div class="card"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Received</th><th>Vendor · order</th><th>Store</th><th>Uploaded by</th><th>File</th><th class="right">Ordered</th><th class="right">Received</th><th class="right">Value</th><th></th></tr></thead><tbody>
+ <div class="filters">${rangeCtl('batches')}</div><div class="card"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Received</th><th>Vendor · order</th><th>Store</th><th>Uploaded by</th><th>File</th><th class="right">Ordered</th><th class="right">Received</th><th class="right">Value</th><th></th></tr></thead><tbody>
  ${list.map(b=>{const o=b.lines.reduce((a,l)=>a+l.ordered,0),r=b.lines.reduce((a,l)=>a+l.received,0);return `<tr class="click" data-act="openBatch" data-b="${b.id}"><td class="num">${fmtDT(b.at)}</td><td>${esc(b.vendor)}<div class="mono small muted">${esc(b.ref)}</div></td><td>${esc(ST(b.storeId).name)}</td><td>${esc(U(b.by).name)}</td><td class="small">${esc(b.file)}</td><td class="right num">${o}</td><td class="right num ${r<o?'diff-neg':''}">${r}</td><td class="right num">${money(b.lines.reduce((a,l)=>a+l.received*l.cost,0))}</td><td>${r<o?pill(o-r+' short','dan'):r>o?pill(r-o+' extra','warn'):pill('Complete','ok')}</td></tr>`}).join('')||'<tr><td colspan="9" class="empty">No deliveries yet.</td></tr>'}</tbody></table></div></div>`};
 function batchModal(id){const b=S.batches.find(x=>x.id===id);const o=b.lines.reduce((a,l)=>a+l.ordered,0),r=b.lines.reduce((a,l)=>a+l.received,0);
  modal(`${esc(b.vendor)} · ${esc(b.ref)}`,`<dl class="kv"><dt>Store</dt><dd>${esc(ST(b.storeId).name)}</dd><dt>Uploaded</dt><dd>${fmtDT(b.at)} by <b>${esc(U(b.by).name)}</b></dd><dt>File</dt><dd>${esc(b.file)}</dd><dt>Order date</dt><dd>${esc(b.date)}</dd>${b.tracking?`<dt>Tracking</dt><dd class="mono">${esc(b.tracking)}</dd>`:''}<dt>Totals</dt><dd>${o} ordered · ${r} received · ${money(b.lines.reduce((a,l)=>a+l.received*l.cost,0))} at cost${b.shipping?` · shipping ${money(b.shipping)}`:''}</dd></dl>
@@ -770,11 +863,11 @@ function customerForm(forWhat){modal('New customer',`<form id="cform" class="sta
 /* ---- Repairs (shop side) ---- */
 const repPipe=r=>{const flow=r.status==='notfix'?['intake','dispatch','tech','notfix','returned','collected']:['intake','dispatch','tech','fixed','returned','collected'];const ix=flow.indexOf(r.status);return `<div class="pipeline">${flow.map((s,i)=>`<span class="${i<ix?'done':i===ix?'on':''}">${REPAIR_LABEL[s]}</span>`).join('')}</div>`};
 const repPill=s=>pill(REPAIR_LABEL[s],{intake:'',dispatch:'warn',tech:'info',fixed:'ok',notfix:'dan',returned:'acc',collected:''}[s]);
-VIEWS.repairs=()=>{const sid=curStore();const f=UI.repF;let list=S.repairs.filter(r=>inStore(r,sid));
+VIEWS.repairs=()=>{const sid=curStore();const f=UI.repF;let list=S.repairs.filter(r=>inStore(r,sid)&&inRange('repairs',r.createdAt));
  if(f==='open')list=list.filter(r=>r.status!=='collected');else if(f!=='all')list=list.filter(r=>r.status===f);list.sort((a,b)=>b.createdAt-a.createdAt);
  return `<div class="page-h"><div><h1>Repairs</h1><p>Check in devices that cannot be fixed in the shop, label them, and send them with the senior technician. Track every job until the customer collects it.</p></div>${sid!=='all'?`<button class="btn pri" data-act="newRepair">${ic('plus')} New repair</button>`:''}</div>
  ${howto('Repair workflow',['<b>New repair</b>: enter the customer, the device and its IMEI/serial, tick what is damaged and describe the fault.','Print the repair label and stick it on the device (or its bag).','If the shop cannot fix it, set status <b>Dispatched for repair</b> with the expected return date. The job appears in the technician\'s pickup list for this shop.','The technician collects it, sets complexity, repair cost and shipping, then marks it <b>Fixed</b> or <b>Not repairable</b> and brings it back.','When it arrives, press <b>Back in shop</b>, call the customer, and mark <b>Collected</b> when they pick it up.'])}
- <div class="card card-b row" style="margin-bottom:12px"><form class="scan" data-form="findRepair" style="flex:1;min-width:240px"><input class="in" id="repScan" placeholder="Scan repair label or type RP-number" style="font-size:15px;padding:8px 10px"><button class="btn">Find</button></form>
+ <div class="filters">${rangeCtl('repairs')}<form class="scan" data-form="findRepair" style="flex:1;min-width:240px"><input class="in" id="repScan" placeholder="Scan label or type RP-number" style="font-size:14px;height:40px;border-width:1px"><button class="btn" style="height:40px">Find</button></form>
  <select class="in" style="width:auto" id="repF" data-on="repF">${[['open','All open jobs'],['intake','Received in shop'],['dispatch','Dispatched (awaiting pickup)'],['tech','With technician'],['fixed','Fixed'],['notfix','Not repairable'],['returned','Back in shop'],['collected','Collected'],['all','Everything']].map(([v,t])=>`<option value="${v}" ${f===v?'selected':''}>${t}</option>`).join('')}</select></div>
  <div class="card"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Ticket</th><th>Device</th><th>Customer</th><th>Damage</th>${sid==='all'?'<th>Store</th>':''}<th>Status</th><th>Expected</th><th class="right">Cost</th></tr></thead><tbody>${list.map(r=>`<tr class="click" data-act="openRepair" data-r="${r.id}"><td class="mono">${r.id}</td><td>${esc(r.device)}</td><td>${esc(r.customer)}<div class="small muted">${esc(r.phone)}</div></td><td class="small">${r.damage.map(esc).join(', ')}</td>${sid==='all'?`<td>${esc(ST(r.storeId).name)}</td>`:''}<td>${repPill(r.status)}</td><td class="num small">${r.expected?fmtD(r.expected):'—'}</td><td class="right num">${r.repairCost!=null?money(r.repairCost+(r.shipCost||0)):'—'}</td></tr>`).join('')||'<tr><td colspan="8" class="empty">No repair jobs in this view.</td></tr>'}</tbody></table></div></div>`};
 function repairForm(){modal('New repair',`<form id="rform" class="stack" data-form="saveRepair"><div class="grid g2"><label class="field"><span>Customer name *</span><input class="in" id="r_customer" required autofocus></label><label class="field"><span>Mobile *</span><input class="in" id="r_phone" required type="tel"></label></div>
@@ -832,18 +925,18 @@ function transferForm(pid,from){const p=P(pid);modal('Request from '+esc(ST(from
  `<button class="btn" data-act="closeModal">Cancel</button><button class="btn pri" data-act="submitForm" data-f="tform">Send request</button>`)}
 
 /* ---- Shifts ---- */
-VIEWS.shifts=()=>{const sid=curStore();const mgr=isMgr();let list=S.shifts.filter(x=>inStore(x,sid)&&(mgr||x.userId===me().id)).sort((a,b)=>b.openAt-a.openAt);
+VIEWS.shifts=()=>{const sid=curStore();const mgr=isMgr();let list=S.shifts.filter(x=>inRange('shifts',x.openAt)&&inStore(x,sid)&&(mgr||x.userId===me().id)).sort((a,b)=>b.openAt-a.openAt);
  const sh=openShift();
  return `<div class="page-h"><div><h1>Shifts & cash</h1><p>Each shift starts with an opening balance and ends with the cash deposit handed over. If the deposit differs from what the system counted, the staff member's note explains why.</p></div>${sid!=='all'?(sh?`<button class="btn pri" data-act="endShift">End my shift</button>`:`<button class="btn pri" data-act="startShift">Start shift</button>`):''}</div>
  ${howto('Opening and closing the till',['When you sign in you are asked for the <b>opening balance</b>: count the float in the drawer and enter it.','Every sale where you tick <b>Cash deposit</b> is added to your shift automatically.','At the end of the day press <b>End shift</b>. The system shows the cash you collected.','If cash was spent (e.g. $100 for a courier), change the deposit amount and write a note. The difference and your note are saved for the admin.'])}
- <div class="card"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Staff</th>${sid==='all'?'<th>Store</th>':''}<th>Opened</th><th>Closed</th><th class="right">Opening</th><th class="right">Cash collected</th><th class="right">Deposit handed over</th><th class="right">Difference</th><th>Note</th></tr></thead><tbody>
+ <div class="filters">${rangeCtl('shifts')}</div><div class="card"><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Staff</th>${sid==='all'?'<th>Store</th>':''}<th>Opened</th><th>Closed</th><th class="right">Opening</th><th class="right">Cash collected</th><th class="right">Deposit handed over</th><th class="right">Difference</th><th>Note</th></tr></thead><tbody>
  ${list.map(x=>{const c=x.closeAt?x.cashCollected??shiftCash(x).cash:shiftCash(x).cash;const diff=x.closeAt?r2(x.declared-c):0;return `<tr><td>${esc(U(x.userId).name)}</td>${sid==='all'?`<td>${esc(ST(x.storeId).name)}</td>`:''}<td class="num small">${fmtDT(x.openAt)}</td><td class="num small">${x.closeAt?fmtDT(x.closeAt):pill('Open','ok')}</td><td class="right num">${money(x.opening)}</td><td class="right num">${money(c)}</td><td class="right num">${x.closeAt?money(x.declared):'—'}</td><td class="right num ${diff<0?'diff-neg':diff>0?'diff-pos':''}">${x.closeAt?(diff?money(diff):'0.00'):''}</td><td class="small wrap">${esc(x.note||'')}</td></tr>`}).join('')||'<tr><td colspan="9" class="empty">No shifts yet.</td></tr>'}</tbody></table></div></div>`};
 
 /* ---- Activity log ---- */
-function logFiltered(){const sid=curStore(),F=UI.logF;const q=F.q.toLowerCase();return S.log.filter(l=>(sid==='all'?(!F.store||l.storeId===F.store):l.storeId===sid)&&(!F.type||l.type===F.type)&&(!F.user||l.by===F.user)&&(!q||l.msg.toLowerCase().includes(q)))}
+function logFiltered(){const sid=curStore(),F=UI.logF;const q=F.q.toLowerCase();return S.log.filter(l=>inRange('log',l.at)&&(sid==='all'?(!F.store||l.storeId===F.store):l.storeId===sid)&&(!F.type||l.type===F.type)&&(!F.user||l.by===F.user)&&(!q||l.msg.toLowerCase().includes(q)))}
 VIEWS.log=()=>{const sid=curStore(),F=UI.logF;const list=logFiltered();
  return `<div class="page-h"><div><h1>Activity log</h1><p>Everything that changes stock, money or customers, with who did it and when: scan-outs, uploads, receiving adjustments, returns, credit, repairs, transfers, shifts and alerts.</p></div><button class="btn tip-l tip-b" data-act="copyLog" data-tip="Copies the filtered rows as CSV so you can paste them into Excel.">${ic('copy')} Copy as CSV</button></div>
- <div class="card card-b" style="margin-bottom:12px"><div class="grid g4"><label class="field"><span>Search</span><input class="in" id="lq" value="${esc(F.q)}" placeholder="Product, order #, customer…" data-on="logF" data-k="q"></label>
+ <div class="filters">${rangeCtl('log')}</div><div class="card card-b" style="margin-bottom:12px"><div class="grid g4"><label class="field"><span>Search</span><input class="in" id="lq" value="${esc(F.q)}" placeholder="Product, order #, customer…" data-on="logF" data-k="q"></label>
  <label class="field"><span>Type</span><select class="in" id="lt" data-on="logF" data-k="type"><option value="">All activity</option>${Object.entries(LOG_TYPES).map(([k,v])=>`<option value="${k}" ${F.type===k?'selected':''}>${v}</option>`).join('')}</select></label>
  <label class="field"><span>Employee</span><select class="in" id="lu" data-on="logF" data-k="user"><option value="">Everyone</option>${S.users.map(u=>`<option value="${u.id}" ${F.user===u.id?'selected':''}>${esc(u.name)}</option>`).join('')}<option value="sys" ${F.user==='sys'?'selected':''}>System (alerts)</option></select></label>
  ${sid==='all'?`<label class="field"><span>Store</span><select class="in" id="ls" data-on="logF" data-k="store"><option value="">All stores</option>${S.stores.map(s=>`<option value="${s.id}" ${F.store===s.id?'selected':''}>${esc(s.name)}</option>`).join('')}</select></label>`:'<div></div>'}</div></div>
@@ -1049,6 +1142,190 @@ const onEv=ev=>{const el=ev.target;const k=el.dataset&&el.dataset.on;if(!k)retur
 document.addEventListener('input',onEv);document.addEventListener('change',onEv);
 document.addEventListener('submit',ev=>{const f=ev.target;ev.preventDefault();if(f.dataset.form&&FORM[f.dataset.form])FORM[f.dataset.form](f)});
 document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&$('#modal').innerHTML)closeModal()});
+
+/* ============ Home, register, dashboard & reports (v2 UI) ============ */
+Object.assign(ICON,{
+ cal:'<path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4"/>',
+ chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+ search:'<path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM21 21l-5-5"/>',
+ grid:'<path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/>',
+ arrow:'<path d="M9 6l6 6-6 6"/>'});
+
+/* ---- date ranges ---- */
+const PRESETS=[['today','Today'],['yesterday','Yesterday'],['7d','Last 7 days'],['30d','Last 30 days'],['month','This month'],['lastmonth','Last month'],['90d','Last 90 days'],['all','All time'],['custom','Custom dates…']];
+const RDEF={dash:'7d',log:'30d',batches:'all',shifts:'30d',repairs:'all'};
+function getRange(k){UI.range=UI.range||{};const r=UI.range[k]||(UI.range[k]={p:RDEF[k]||'30d',from:isoD(Date.now()-6*DAY),to:isoD(Date.now())});
+ const t0=today0();let a,b=Date.now()+1;const d=new Date();
+ switch(r.p){case'today':a=t0;break;case'yesterday':a=t0-DAY;b=t0;break;case'7d':a=t0-6*DAY;break;case'30d':a=t0-29*DAY;break;case'90d':a=t0-89*DAY;break;
+  case'month':a=new Date(d.getFullYear(),d.getMonth(),1).getTime();break;
+  case'lastmonth':a=new Date(d.getFullYear(),d.getMonth()-1,1).getTime();b=new Date(d.getFullYear(),d.getMonth(),1).getTime();break;
+  case'all':a=0;break;
+  case'custom':{a=new Date(r.from+'T00:00').getTime();b=new Date(r.to+'T00:00').getTime()+DAY;if(!(b>a)){b=a+DAY}break}}
+ const label=r.p==='custom'?`${fmtD(a)} – ${fmtD(b-1)}`:r.p==='all'?'All time':`${fmtD(a)} – ${fmtD(Math.min(b,Date.now())-1)}`;
+ return{a,b,p:r.p,label}}
+const inRange=(k,t)=>{const r=getRange(k);return t>=r.a&&t<r.b};
+function rangeCtl(k,note=true){getRange(k);const r=UI.range[k];
+ return `<div class="range">${ic('cal')}<select class="in" id="rg_${k}" data-on="rangeP" data-k="${k}" aria-label="Date range">${PRESETS.map(([v,t])=>`<option value="${v}" ${r.p===v?'selected':''}>${t}</option>`).join('')}</select>${r.p==='custom'?`<input type="date" class="in" id="rf_${k}" value="${r.from}" max="${isoD(Date.now())}" data-on="rangeD" data-k="${k}" data-f="from" aria-label="From"><span class="muted">to</span><input type="date" class="in" id="rt_${k}" value="${r.to}" max="${isoD(Date.now())}" data-on="rangeD" data-k="${k}" data-f="to" aria-label="To">`:''}${note&&r.p!=='custom'?`<span class="range-note">${esc(getRange(k).label)}</span>`:''}</div>`}
+ON.rangeP=e=>{getRange(e.dataset.k);UI.range[e.dataset.k].p=e.value;render()};
+ON.rangeD=e=>{if(!e.value)return;UI.range[e.dataset.k][e.dataset.f]=e.value;render()};
+
+/* ---- formatting & chart helpers ---- */
+const fmtK=n=>{n=+n||0;const a=Math.abs(n);return (n<0?'−':'')+'$'+(a>=1e6?(a/1e6).toFixed(1)+'M':a>=1e4?Math.round(a/1e3)+'k':a>=1e3?(a/1e3).toFixed(1)+'k':Math.round(a))};
+const pct=(n,d)=>d?Math.round(n/d*100):0;
+function delta(cur,prev,p){if(p==='all'||prev==null)return'';if(!prev&&!cur)return'<span class="delta flat">—</span>';if(!prev)return'<span class="delta up">new</span>';
+ const ch=(cur-prev)/Math.abs(prev)*100;const k=Math.abs(ch)<0.5?'flat':ch>0?'up':'down';return `<span class="delta ${k}" title="vs previous period">${k==='up'?'▲':k==='down'?'▼':''} ${Math.abs(ch).toFixed(ch&&Math.abs(ch)<10?1:0)}%</span>`}
+function niceMax(m){if(m<=0)return 1;const e=Math.pow(10,Math.floor(Math.log10(m)));const f=m/e;return(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*e}
+function vchart(data,fmt=fmtK){if(!data.length)return '<div class="empty">No data in this range.</div>';const mx=niceMax(Math.max(...data.map(d=>d.v),0)/4)*4;const ticks=[1,.75,.5,.25,0];const every=Math.max(1,Math.ceil(data.length/10));
+ return `<div class="vchart" role="img" aria-label="Bar chart"><div class="vy">${ticks.map(t=>`<span>${fmt(mx*t)}</span>`).join('')}</div><div class="vplot"><div class="vgrid">${ticks.map(()=>'<i></i>').join('')}</div><div class="vbars">${data.map(d=>`<div class="vcol" tabindex="0" data-tip="${esc(d.tip)}"><div class="vbar" style="height:${(d.v/mx*100).toFixed(2)}%"></div></div>`).join('')}</div><div class="vx">${data.map((d,i)=>`<span>${i%every===0?esc(d.label):''}</span>`).join('')}</div></div></div>`}
+function hbars(rows,{fmt=money,cls='',max}={}){if(!rows.length)return '<div class="empty">Nothing in this range.</div>';const mx=max||Math.max(...rows.map(r=>r.v),0)||1;
+ return `<div class="hbars">${rows.map(r=>`<div class="hrow" data-tip="${esc(r.tip||r.label+': '+fmt(r.v))}" tabindex="0"><span class="hl">${esc(r.label)}</span><div class="htrack ${r.cls||cls}"><i style="width:${(r.v/mx*100).toFixed(1)}%"></i></div><span class="hv">${r.right??fmt(r.v)}</span></div>`).join('')}</div>`}
+function buckets(a,b){const end=Math.min(b,Date.now());if(end-a<=DAY+1){const out=[];for(let h=8;h<=21;h++){const s=a+h*36e5;out.push({a:s,b:s+36e5,label:(h%12||12)+(h<12?'a':'p'),long:new Date(s).toLocaleString('en-CA',{hour:'numeric'})})}out[0].a=a;out.at(-1).b=end+1;return out}
+ const days=Math.ceil((end-a)/DAY);const step=days>120?7:1;const out=[];let s=a;while(s<end){const e=s+step*DAY;out.push({a:s,b:e,label:new Date(s).toLocaleDateString('en-CA',{month:'short',day:'numeric'}),long:step===7?'Week of '+fmtD(s):new Date(s).toLocaleDateString('en-CA',{weekday:'short',month:'short',day:'numeric'})});s=e}return out}
+
+/* ---- report data ---- */
+UI.rf=UI.rf||{store:null,emp:'',cat:''};UI.rtab=UI.rtab||'sales';
+const repStore=()=>me().role==='super'?(UI.rf.store??curStore()):curStore();
+const inRepStore=x=>{const s=repStore();return s==='all'||x.storeId===s};
+function saleLines(a,b){const out=[];for(const s of S.sales){if(s.at<a||s.at>=b||!inRepStore(s)||(UI.rf.emp&&s.by!==UI.rf.emp))continue;
+  for(const i of s.items){const p=P(i.pid);if(!p||(UI.rf.cat&&p.category!==UI.rf.cat))continue;const amt=i.qty*i.price;const share=s.total?amt/s.total:0;out.push({s,i,p,amt,cost:i.qty*p.cost,cash:s.pay.cash*share,card:s.pay.card*share,credit:(s.pay.credit||0)*share})}}return out}
+function salesStats(lines){const tx=new Set(lines.map(l=>l.s.id)).size;const net=lines.reduce((a,l)=>a+l.amt,0);return{net:r2(net),tx,avg:tx?net/tx:0,units:lines.reduce((a,l)=>a+l.i.qty,0),profit:r2(lines.reduce((a,l)=>a+l.amt-l.cost,0)),cash:lines.reduce((a,l)=>a+l.cash,0),card:lines.reduce((a,l)=>a+l.card,0),credit:lines.reduce((a,l)=>a+l.credit,0)}}
+const groupSum=(arr,key,val)=>{const m=new Map();for(const x of arr){const k=key(x);m.set(k,(m.get(k)||0)+val(x))}return[...m.entries()].sort((a,b)=>b[1]-a[1])};
+function kpi(k,v,sub=''){return `<div class="kpi"><div class="k">${k}</div><div class="v">${v}</div>${sub?`<div class="s">${sub}</div>`:''}</div>`}
+
+/* ---- Home launcher ---- */
+VIEWS.home=()=>{const u=me(),sid=curStore();const h=new Date().getHours();const hi=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+ const t0=today0();const today=S.sales.filter(s=>s.at>=t0&&inStore(s,sid));const tot=today.reduce((a,s)=>a+s.total,0);const sh=openShift();
+ const alerts=computeAlerts(sid).length;const trIn=S.transfers.filter(t=>t.status==='requested'&&(sid==='all'||t.from===sid)).length;const trArr=S.transfers.filter(t=>t.status==='shipped'&&(sid==='all'||t.to===sid)).length;
+ const rBack=S.repairs.filter(r=>inStore(r,sid)&&r.status==='returned').length;const rReady=S.repairs.filter(r=>inStore(r,sid)&&['fixed','notfix'].includes(r.status)).length;const rIntake=S.repairs.filter(r=>inStore(r,sid)&&r.status==='intake').length;
+ const T=[['pos','Sell','Scan items, take cash or card','scan',''],['returns','Return or exchange','Give store credit, swap items','undo','c4'],['receive','Receive stock','Upload a delivery, print labels','inbox','c2'],['products','Products & labels','Find items, check stock, print','box','c2'],
+  ['repairs','Repairs','Check in, send to technician','tool','c3',rBack],['exchange','Store exchange','Get stock from another shop','swap','c3',trIn],['customers','Customers','Look up credit balance','user',''],[isMgr()?'dash':'alerts',isMgr()?'Dashboard':'Low stock',isMgr()?'Sales, stock and cash reports':'What needs reordering',isMgr()?'chart':'bell',isMgr()?'':'c4',isMgr()?0:alerts]].filter(t=>can(t[0]));
+ const att=[[alerts,'products at or below their alert level','alerts',alerts?'dan':'ok'],[trIn,'store exchange requests waiting for you to dispatch','exchange',trIn?'warn':'ok'],[trArr,'transfers on the way to you','exchange','ok'],[rBack,'repairs back in shop · call the customer','repairs',rBack?'warn':'ok'],[rIntake,'repairs checked in but not dispatched','repairs',rIntake?'warn':'ok'],[rReady,'repairs ready at the technician','repairs','ok']].filter(a=>a[0]||a[3]!=='ok');
+ return `<div class="hello"><div><div class="muted">${new Date().toLocaleDateString('en-CA',{weekday:'long',month:'long',day:'numeric'})}</div><h1>${hi}, ${esc(u.name.split(' ')[0])}</h1></div>${sid!=='all'?`<span class="pill acc">${ic('store').replace('<svg','<svg style="width:14px;height:14px"')} ${esc(ST(sid).name)}</span>`:''}</div>
+ ${sid!=='all'&&!sh?`<div class="banner"><div><b>Start your shift</b><div class="small">Count the cash drawer and enter the opening balance before your first sale.</div></div><button class="btn pri" data-act="startShift">Start shift</button></div>`:''}
+ <div class="tiles">${T.map(([v,t,s,icn,c,badge])=>`<button class="tile ${c}" data-act="go" data-v="${v}">${badge?`<span class="badge">${badge}</span>`:''}<div class="ti">${ic(icn)}</div><div><b>${t}</b><br><span>${s}</span></div></button>`).join('')}</div>
+ <div class="cols"><div class="stack"><div class="kpis" style="margin:0">${kpi('Sales today',money(tot),`${today.length} sale${today.length===1?'':'s'}`)}${kpi('Cash today',money(today.reduce((a,s)=>a+s.pay.cash,0)),'cash deposit')}${kpi('Card today',money(today.reduce((a,s)=>a+s.pay.card,0)),'card pay')}${kpi(sh?'Drawer should hold':'Shift',sh?money(sh.opening+shiftCash(sh).cash):'Not started',sh?`opening ${money(sh.opening)} + cash`:'')}</div>
+  <div class="card"><div class="card-h"><h2>Latest sales</h2><button class="btn sm" data-act="go" data-v="pos">Open register</button></div><div class="tbl-wrap"><table class="tbl"><tbody>${today.sort((a,b)=>b.at-a.at).slice(0,6).map(s=>`<tr class="click" data-act="saleReceipt" data-s="${s.id}"><td class="num small muted" style="width:70px">${new Date(s.at).toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})}</td><td>${s.items.map(i=>`${i.qty} × ${esc(P(i.pid).name)}`).join(', ').slice(0,90)}</td><td>${s.pay.cash?pill('Cash','acc'):pill('Card','info')}</td><td class="right num"><b>${money(s.total)}</b></td></tr>`).join('')||'<tr><td class="empty">No sales yet today.</td></tr>'}</tbody></table></div></div></div>
+ <div class="card"><div class="card-h"><h2>Needs attention</h2></div><div class="attn">${att.map(([n,t,v,k])=>`<button data-act="go" data-v="${v}"><span class="n ${k}">${n}</span><span>${t}</span><span class="go">${ic('arrow').replace('<svg','<svg style="width:18px;height:18px"')}</span></button>`).join('')||'<div class="empty">All clear.</div>'}</div></div></div>`};
+
+/* ---- Register (POS) ---- */
+const CAT_COLOR={Screens:'#2a78d6','Batteries':'#eb6834','Back Glass':'#1baf7a','Small Parts':'#eda100',Cases:'#e87ba4','Cables & Chargers':'#6250d6','Audio & Accessories':'#008300',Devices:'#e34948'};
+function posGrid(){const sid=curStore();const q=(UI.posQ||'').toLowerCase().trim().split(/\s+/).filter(Boolean);
+ let list=Object.keys(S.stock[sid]||{}).map(P).filter(p=>p&&(!UI.posCat||p.category===UI.posCat)&&q.every(w=>(p.name+' '+p.model+' '+p.vendorSku+' '+p.ean).toLowerCase().includes(w)));
+ list.sort((x,y)=>(qty(sid,y.id)>0)-(qty(sid,x.id)>0)||x.name.localeCompare(y.name));const n=list.length;list=list.slice(0,48);
+ return `${list.map(p=>{const left=qty(sid,p.id);return `<button class="ptile ${left<=0?'out':''}" style="--cat:${CAT_COLOR[p.category]||'var(--accent)'}" data-act="posAdd" data-p="${p.id}"><span class="pn">${esc(p.name)}</span><span class="pp"><b>${money(p.price)}</b><span class="small ${left<=0?'diff-neg':'muted'}">${left<=0?'Out':left+' left'}</span></span></button>`}).join('')||'<div class="empty" style="grid-column:1/-1">No products match.</div>'}${n>48?`<div class="small muted" style="grid-column:1/-1">Showing 48 of ${n}. Type to narrow down.</div>`:''}`}
+VIEWS.pos=()=>{const sid=curStore();if(sid==='all')return needStore();const sh=openShift();
+ const cart=UI.cart,sub=r2(cart.reduce((a,l)=>a+l.price*l.qty,0));const cust=UI.cartCust&&C(UI.cartCust);const credit=cust?Math.min(cust.credit,sub):0;const useCredit=UI.useCredit&&credit>0?credit:0;const due=r2(sub-useCredit);
+ const hit=UI.lastHit&&P(UI.lastHit);const cats=[...new Set(Object.keys(S.stock[sid]||{}).map(pid=>P(pid)&&P(pid).category).filter(Boolean))].sort((a,b)=>CATS.indexOf(a)-CATS.indexOf(b));
+ const today=S.sales.filter(s=>s.storeId===sid&&s.at>=today0()).sort((a,b)=>b.at-a.at);
+ return `${!sh?`<div class="banner"><div><b>No open shift</b><div class="small">Start one so cash sales count toward your cash deposit.</div></div><button class="btn pri" data-act="startShift">Start shift</button></div>`:''}
+ <div class="reg"><div class="stack">
+  <div class="card card-b stack" style="gap:12px">
+   <form class="scan" data-form="scanSell"><input class="in" id="scanIn" autocomplete="off" placeholder="Scan barcode or type SKU…" aria-label="Scan barcode" autofocus><button class="btn pri">${ic('plus')} Add</button></form>
+   ${UI.scanErr?`<div class="note dan">${esc(UI.scanErr)}</div>`:''}
+   ${hit?`<div class="prod-hit" style="margin:0"><div><div class="small muted">Just scanned</div><h3>${esc(hit.name)}</h3><div class="small muted">${esc(hit.model||hit.category)} · SKU <span class="mono">${esc(hit.vendorSku)}</span> · <b>${qty(sid,hit.id)}</b> left here</div></div><div class="right"><div style="font-size:22px;font-weight:800">${money(hit.price)}</div><button class="btn sm ghost" data-act="openProduct" data-p="${hit.id}">Details</button></div></div>`:''}
+   <div class="row" style="flex-wrap:nowrap"><div class="gsearch" style="max-width:none">${ic('search')}<input class="in" id="posQ" placeholder="Search items to tap…" value="${esc(UI.posQ||'')}" data-on="posQ"></div></div>
+   <div class="cats"><button class="${!UI.posCat?'on':''}" data-act="posCat" data-c="">All items</button>${cats.map(c=>`<button class="${UI.posCat===c?'on':''}" data-act="posCat" data-c="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+   <div class="pgrid" id="posGrid">${posGrid()}</div>
+  </div>
+  <details class="card"><summary class="card-h" style="cursor:pointer;list-style:none"><h2>Today's scan-outs</h2><span class="small muted">${today.length} sales · ${money(today.reduce((a,s)=>a+s.total,0))}</span></summary><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Time</th><th>Items</th><th>Paid by</th><th class="right">Total</th><th>Staff</th></tr></thead><tbody>${today.map(s=>`<tr class="click" data-act="saleReceipt" data-s="${s.id}"><td class="num">${new Date(s.at).toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'})}</td><td class="wrap">${s.items.map(i=>`${i.qty} × ${esc(P(i.pid).name)}`).join('<br>')}</td><td>${[s.pay.cash?pill('Cash','acc'):'',s.pay.card?pill('Card','info'):'',s.pay.credit?pill('Credit','warn'):''].join(' ')}</td><td class="right num">${money(s.total)}</td><td>${esc(U(s.by).name)}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">No sales yet today.</td></tr>'}</tbody></table></div></details>
+ </div>
+ <div class="card order"><div class="card-h"><h2>Current sale</h2>${cart.length?`<button class="btn sm ghost" data-act="clearCart">Clear</button>`:`<span class="small muted">${esc(ST(sid).name)}</span>`}</div>
+  <div class="card-b lines" style="padding-top:4px;padding-bottom:4px">${cart.length?cart.map((l,i)=>{const p=P(l.pid);const left=qty(sid,l.pid);return `<div class="oline"><div><div style="font-weight:600;font-size:13.5px">${esc(p.name)}</div><div class="small muted">${money(l.price)} each${l.qty>left?' · <span class="diff-neg">only '+left+' in stock</span>':''}</div></div><div class="right"><div class="qty"><button data-act="cartQty" data-i="${i}" data-d="-1" aria-label="Less">−</button><span>${l.qty}</span><button data-act="cartQty" data-i="${i}" data-d="1" aria-label="More">+</button></div><div class="num" style="font-weight:700;margin-top:4px">${money(l.price*l.qty)}</div></div></div>`}).join(''):`<div class="empty">${ic('scan').replace('<svg','<svg style="width:40px;height:40px;opacity:.4;display:block;margin:0 auto 8px"')}Scan an item or tap a product to start a sale.</div>`}</div>
+  <div class="card-b stack" style="border-top:1px solid var(--line);gap:12px">
+   <div class="field"><span>Customer (optional) ${tip('Find them by phone, email or ID to use store credit from an earlier return.')}</span>${cust?`<div class="row" style="justify-content:space-between"><div><b>${esc(cust.name)}</b><div class="small muted">Credit ${money(cust.credit)}</div></div><button class="btn sm ghost" data-act="cartCust" data-c="">Remove</button></div>${cust.credit>0?`<label class="check"><input type="checkbox" id="useCredit" data-on="useCredit" ${UI.useCredit?'checked':''}> Use store credit (${money(credit)})</label>`:''}`:`<div class="row" style="flex-wrap:nowrap"><input class="in" id="custQ" placeholder="Phone, email or ID" data-on="custSearch"><button class="btn" data-act="newCustomer" data-for="pos">New</button></div><div id="custRes"></div>`}</div>
+   <div><div class="total-line"><span class="muted">Subtotal</span><span class="num">${money(sub)}</span></div>${useCredit?`<div class="total-line"><span class="muted">Store credit</span><span class="num">−${money(useCredit)}</span></div>`:''}<div class="total-line big"><span>Total</span><span class="num">${money(due)}</span></div></div>
+   <div class="paybox"><label><input type="checkbox" id="payCash" data-on="payTick" ${UI.payCash?'checked':''}> ${ic('cash').replace('<svg','<svg style="width:22px;height:22px"')} Cash deposit</label><label><input type="checkbox" id="payCard" data-on="payTick" ${UI.payCard?'checked':''}> Card pay</label></div>
+   ${UI.payCash&&UI.payCard?`<label class="field"><span>Cash part (rest goes on card)</span><input class="in num" id="cashPart" type="number" step="0.01" min="0" max="${due}" value="${(+(UI.cashPart??due/2)).toFixed(2)}" data-on="cashPart"><span class="small muted">Card part: ${money(due-(+(UI.cashPart??due/2)||0))}</span></label>`:''}
+   <button class="btn pri lg" data-act="completeSale" ${!cart.length?'disabled':''}>Charge ${money(due)}</button>
+  </div></div></div>`};
+ON.posQ=e=>{UI.posQ=e.value;$('#posGrid').innerHTML=posGrid()};
+ACT.posCat=e=>{UI.posCat=e.dataset.c;render()};
+ACT.posAdd=e=>{const p=P(e.dataset.p);if(p){addToCart(p);render()}};
+
+/* ---- Dashboard & reports ---- */
+VIEWS.dash=()=>{const u=me();const R=getRange('dash');const len=Math.min(R.b,Date.now()+1)-R.a;const pa=R.p==='all'?null:R.a-len,pb=R.a;const tab=UI.rtab;
+ const emps=S.users.filter(x=>['admin','staff','super'].includes(x.role)&&(repStore()==='all'||x.storeId===repStore()));
+ const filters=`<div class="filters">${rangeCtl('dash')}
+  ${u.role==='super'?`<select class="in" id="rfStore" data-on="rfSet" data-k="store" aria-label="Store"><option value="all" ${repStore()==='all'?'selected':''}>All stores</option>${S.stores.map(s=>`<option value="${s.id}" ${repStore()===s.id?'selected':''}>${esc(s.name)}</option>`).join('')}</select>`:''}
+  ${['sales'].includes(tab)?`<select class="in" id="rfEmp" data-on="rfSet" data-k="emp" aria-label="Employee"><option value="">All employees</option>${emps.map(x=>`<option value="${x.id}" ${UI.rf.emp===x.id?'selected':''}>${esc(x.name)}</option>`).join('')}</select>`:''}
+  ${['sales','inventory'].includes(tab)?`<select class="in" id="rfCat" data-on="rfSet" data-k="cat" aria-label="Category"><option value="">All categories</option>${CATS.map(c=>`<option ${UI.rf.cat===c?'selected':''}>${c}</option>`).join('')}</select>`:''}
+  ${(UI.rf.emp||UI.rf.cat)?`<button class="btn sm ghost" data-act="rfClear">Clear filters</button>`:''}<span class="grow" style="flex:1"></span><button class="btn sm" data-act="copyReport">${ic('copy')} Copy as CSV</button></div>`;
+ const tabs=`<div class="tabs" role="tablist">${[['sales','Sales'],['inventory','Inventory'],['returns','Returns & credit'],['repairs','Repairs'],['cash','Cash & shifts']].map(([v,t])=>`<button class="${tab===v?'on':''}" data-act="rtab" data-v="${v}" role="tab">${t}</button>`).join('')}</div>`;
+ return `<div class="page-h"><div><h1>Dashboard</h1><p>${repStore()==='all'?'All stores':esc(ST(repStore()).name)} · ${esc(R.label)}${R.p!=='all'?' · ▲▼ compared with the period before':''}</p></div></div>${filters}${tabs}${REPORT[tab](R,pa,pb)}`};
+const REPORT={};
+REPORT.sales=(R,pa,pb)=>{const L=saleLines(R.a,R.b),st=salesStats(L);const P0=pa!=null?salesStats(saleLines(pa,pb)):null;const mgr=isMgr();
+ UI._csv=['date,receipt,store,employee,product,category,qty,price,amount,cash,card',...L.map(l=>[new Date(l.s.at).toISOString(),l.s.id,ST(l.s.storeId).name,U(l.s.by).name,l.p.name,l.p.category,l.i.qty,l.i.price,r2(l.amt),r2(l.cash),r2(l.card)].map(csvCell).join(','))].join('\n');
+ const B=buckets(R.p==='all'?Math.min(...S.sales.map(s=>s.at)):R.a,R.b);const series=B.map(k=>{const ls=L.filter(l=>l.s.at>=k.a&&l.s.at<k.b);const v=ls.reduce((a,l)=>a+l.amt,0);const tx=new Set(ls.map(l=>l.s.id)).size;return{label:k.label,v,tip:`${k.long}\n${money(v)} · ${tx} sale${tx===1?'':'s'}`}});
+ const best=series.reduce((m,x)=>x.v>m.v?x:m,{v:-1,label:''});
+ const byCat=groupSum(L,l=>l.p.category,l=>l.amt);const byStore=groupSum(L,l=>l.s.storeId,l=>l.amt);const byEmp=groupSum(L,l=>l.s.by,l=>l.amt);
+ const top=groupSum(L,l=>l.p.id,l=>l.amt).slice(0,10).map(([pid,v])=>{const ls=L.filter(l=>l.p.id===pid);return{p:P(pid),v,u:ls.reduce((a,l)=>a+l.i.qty,0),pr:ls.reduce((a,l)=>a+l.amt-l.cost,0)}});
+ const hours=groupSum(L,l=>new Date(l.s.at).getHours(),l=>l.amt).sort((a,b)=>a[0]-b[0]);
+ const payTot=st.cash+st.card+st.credit||1;
+ return `<div class="kpis k6">${kpi('Net sales',money(st.net),delta(st.net,P0&&P0.net,R.p)+(P0?`<span>prev ${fmtK(P0.net)}</span>`:''))}${kpi('Transactions',st.tx,delta(st.tx,P0&&P0.tx,R.p))}${kpi('Average sale',money(st.avg),delta(st.avg,P0&&P0.avg,R.p))}${kpi('Items sold',st.units,delta(st.units,P0&&P0.units,R.p))}${mgr?kpi('Gross profit',money(st.profit),`${pct(st.profit,st.net)}% margin ${delta(st.profit,P0&&P0.profit,R.p)}`):''}${kpi('Cash · Card',`${pct(st.cash,payTot)}% · ${pct(st.card,payTot)}%`,`${fmtK(st.cash)} cash · ${fmtK(st.card)} card`)}</div>
+ <div class="card" style="margin-bottom:16px"><div class="card-h"><div><h2>Net sales ${B.length&&B[0].b-B[0].a<=36e5+1?'by hour':B.length&&B[0].b-B[0].a>DAY?'by week':'by day'}</h2><div class="small muted">Hover a bar for the exact amount${best.v>0?` · best: ${esc(best.label)} (${money(best.v)})`:''}</div></div><div class="legend"><span><i style="background:var(--bar)"></i>Net sales</span></div></div><div class="card-b">${vchart(series)}</div></div>
+ <div class="cols even" style="margin-bottom:16px"><div class="card"><div class="card-h"><h2>Sales by category</h2></div><div class="card-b">${hbars(byCat.map(([c,v])=>({label:c,v,right:`${money(v)} <span class="muted small">${pct(v,st.net)}%</span>`,tip:`${c}\n${money(v)} · ${pct(v,st.net)}% of sales`})))}</div></div>
+  <div class="card"><div class="card-h"><h2>Payment types</h2></div><div class="card-b stack"><div class="split" role="img" aria-label="Payment split">${st.cash?`<i style="width:${pct(st.cash,payTot)}%;background:var(--s1)"></i>`:''}${st.card?`<i style="width:${pct(st.card,payTot)}%;background:var(--s2)"></i>`:''}${st.credit?`<i style="width:${pct(st.credit,payTot)}%;background:var(--muted)"></i>`:''}</div><div class="legend"><span><i style="background:var(--s1)"></i>Cash deposit</span><span><i style="background:var(--s2)"></i>Card pay</span>${st.credit?'<span><i style="background:var(--muted)"></i>Store credit</span>':''}</div>
+   ${hbars([{label:'Cash deposit',v:st.cash,right:`${money(st.cash)} <span class="muted small">${pct(st.cash,payTot)}%</span>`},{label:'Card pay',cls:'alt',v:st.card,right:`${money(st.card)} <span class="muted small">${pct(st.card,payTot)}%</span>`},...(st.credit?[{label:'Store credit',v:st.credit}]:[])],{max:payTot})}
+   <div><h3 style="margin:6px 0 10px">Busiest hours</h3>${hbars(hours.map(([h,v])=>({label:`${h%12||12}:00 ${h<12?'am':'pm'}`,v})),{cls:'acc'})}</div></div></div></div>
+ <div class="cols even" style="margin-bottom:16px">${repStore()==='all'?`<div class="card"><div class="card-h"><h2>Sales by store</h2></div><div class="card-b">${hbars(byStore.map(([s,v])=>({label:ST(s).name,v,right:`${money(v)} <span class="muted small">${pct(v,st.net)}%</span>`})))}</div></div>`:''}
+  <div class="card"><div class="card-h"><h2>Sales by employee</h2></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Employee</th><th class="right">Sales</th><th class="right">Net</th><th class="right">Avg</th></tr></thead><tbody>${byEmp.map(([uid_,v])=>{const n=new Set(L.filter(l=>l.s.by===uid_).map(l=>l.s.id)).size;return `<tr><td>${esc(U(uid_).name)}<div class="small muted">${esc(U(uid_).storeId?ST(U(uid_).storeId).name:'')}</div></td><td class="right num">${n}</td><td class="right num"><b>${money(v)}</b></td><td class="right num">${money(n?v/n:0)}</td></tr>`}).join('')||'<tr><td colspan="4" class="empty">No sales in this range.</td></tr>'}</tbody></table></div></div>
+  ${repStore()!=='all'?'':''}</div>
+ <div class="card"><div class="card-h"><h2>Top 10 products</h2><span class="small muted">by net sales</span></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>#</th><th>Product</th><th>Category</th><th class="right">Units</th><th class="right">Net sales</th>${mgr?'<th class="right">Profit</th>':''}</tr></thead><tbody>${top.map((t,i)=>`<tr class="click" data-act="openProduct" data-p="${t.p.id}"><td class="num muted">${i+1}</td><td class="wrap">${esc(t.p.name)}</td><td>${pill(t.p.category)}</td><td class="right num">${t.u}</td><td class="right num"><b>${money(t.v)}</b></td>${mgr?`<td class="right num">${money(t.pr)}</td>`:''}</tr>`).join('')||'<tr><td colspan="6" class="empty">No sales in this range.</td></tr>'}</tbody></table></div></div>`};
+
+REPORT.inventory=(R)=>{const sids=repStore()==='all'?S.stores.map(s=>s.id):[repStore()];const rows=[];
+ for(const sid of sids)for(const pid in S.stock[sid]||{}){const p=P(pid);if(!p||(UI.rf.cat&&p.category!==UI.rf.cat))continue;const q=Math.max(0,S.stock[sid][pid]);rows.push({sid,p,q,cost:q*p.cost,retail:q*p.price})}
+ const units=rows.reduce((a,r)=>a+r.q,0),cost=rows.reduce((a,r)=>a+r.cost,0),retail=rows.reduce((a,r)=>a+r.retail,0);const alerts=sids.flatMap(s=>computeAlerts(s)).filter(a=>a.kind==='product'&&(!UI.rf.cat||a.cat===UI.rf.cat));
+ const bat=S.batches.filter(b=>b.at>=R.a&&b.at<R.b&&inRepStore(b));const bl=bat.flatMap(b=>b.lines.map(l=>({b,l,p:P(l.pid)}))).filter(x=>x.p&&(!UI.rf.cat||x.p.category===UI.rf.cat));
+ const recU=bl.reduce((a,x)=>a+x.l.received,0),ordU=bl.reduce((a,x)=>a+x.l.ordered,0),recV=bl.reduce((a,x)=>a+x.l.received*x.l.cost,0);
+ const adj=S.log.filter(l=>l.type==='ADJUST'&&l.at>=R.a&&l.at<R.b&&inRepStore(l));
+ const byCat=groupSum(rows,r=>r.p.category,r=>r.cost);const byVendor=groupSum(bl,x=>x.b.vendor,x=>x.l.received*x.l.cost);
+ UI._csv=['store,product,category,vendor_sku,on_hand,unit_cost,price,value_at_cost,value_at_retail',...rows.map(r=>[ST(r.sid).name,r.p.name,r.p.category,r.p.vendorSku,r.q,r.p.cost,r.p.price,r2(r.cost),r2(r.retail)].map(csvCell).join(','))].join('\n');
+ return `<div class="kpis k6">${kpi('Units on hand',units,'right now')}${kpi('Stock value (cost)',money(cost),'what you paid')}${kpi('Stock value (retail)',money(retail),`${pct(retail-cost,retail)}% potential margin`)}${kpi('Low / out of stock',alerts.length,`<a href="#" data-act="go" data-v="alerts">see alerts</a>`)}${kpi('Received in range',recU+' units',money(recV)+' at cost')}${kpi('Short-shipped',ordU-recU+' units',ordU?`${pct(recU,ordU)}% of ordered arrived`:'no deliveries')}</div>
+ <div class="cols even" style="margin-bottom:16px"><div class="card"><div class="card-h"><h2>Stock value by category</h2><span class="small muted">at cost, now</span></div><div class="card-b">${hbars(byCat.map(([c,v])=>({label:c,v,tip:`${c}\n${money(v)} at cost · ${rows.filter(r=>r.p.category===c).reduce((a,r)=>a+r.q,0)} units`})))}</div></div>
+ <div class="card"><div class="card-h"><h2>Received by vendor</h2><span class="small muted">in range, at cost</span></div><div class="card-b">${hbars(byVendor.map(([v,x])=>({label:v,v:x})),{cls:'alt'})}</div></div></div>
+ <div class="cols even"><div class="card"><div class="card-h"><h2>Ordered vs received</h2><span class="small muted">lines that came in short</span></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Vendor · order</th><th>Product</th><th class="right">Ordered</th><th class="right">Got</th></tr></thead><tbody>${bl.filter(x=>x.l.received!==x.l.ordered).map(x=>`<tr class="click" data-act="openBatch" data-b="${x.b.id}"><td class="num small">${fmtD(x.b.at)}</td><td>${esc(x.b.vendor)}<div class="mono small muted">${esc(x.b.ref)}</div></td><td class="wrap">${esc(x.p.name)}<div class="small muted">${esc(x.l.reason||'')}</div></td><td class="right num">${x.l.ordered}</td><td class="right num diff-neg">${x.l.received}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">Every delivery in this range arrived complete.</td></tr>'}</tbody></table></div></div>
+ <div class="card"><div class="card-h"><h2>Stock adjustments</h2><span class="small muted">${adj.length} in range</span></div><div class="card-b">${logRows(adj,8)}</div></div></div>`};
+
+REPORT.returns=(R,pa,pb)=>{const rets=S.returns.filter(r=>r.at>=R.a&&r.at<R.b&&inRepStore(r));const prev=pa!=null?S.returns.filter(r=>r.at>=pa&&r.at<pb&&inRepStore(r)):null;
+ const led=S.credits.filter(c=>c.at>=R.a&&c.at<R.b&&inRepStore(c));const issued=led.filter(c=>c.amount>0&&c.type!=='payment').reduce((a,c)=>a+c.amount,0);const used=-led.filter(c=>['redeem','exchange'].includes(c.type)).reduce((a,c)=>a+c.amount,0);
+ const val=rets.reduce((a,r)=>a+r.items.reduce((x,i)=>x+i.value,0),0);const items=rets.flatMap(r=>r.items.map(i=>({r,i,p:P(i.pid)})));
+ UI._csv=['date,receipt,store,customer,items,returned_value,exchange_value,net_credit',...rets.map(r=>[new Date(r.at).toISOString(),r.receipt,ST(r.storeId).name,C(r.customerId).name,r.items.map(i=>P(i.pid).name).join('; '),r2(r.items.reduce((a,i)=>a+i.value,0)),r2(r.exch.reduce((a,i)=>a+i.price,0)),r.net].map(csvCell).join(','))].join('\n');
+ return `<div class="kpis k6">${kpi('Returns',rets.length,delta(rets.length,prev&&prev.length,R.p))}${kpi('Value returned',money(val),'')}${kpi('Exchanges',rets.filter(r=>r.exch.length).length,'took another item')}${kpi('Credit issued',money(issued),'in range')}${kpi('Credit used',money(used),'exchanges + sales')}${kpi('Credit outstanding',money(S.customers.reduce((a,c)=>a+c.credit,0)),'owed to customers now')}</div>
+ <div class="cols even" style="margin-bottom:16px"><div class="card"><div class="card-h"><h2>Returned by category</h2></div><div class="card-b">${hbars(groupSum(items.filter(x=>x.p),x=>x.p.category,x=>x.i.value).map(([c,v])=>({label:c,v})),{cls:'alt'})}</div></div>
+ <div class="card"><div class="card-h"><h2>Condition</h2></div><div class="card-b">${hbars([{label:'Resellable',v:items.filter(x=>x.i.condition==='resell').length},{label:'Faulty',v:items.filter(x=>x.i.condition!=='resell').length}],{fmt:n=>n+' items'})}</div></div></div>
+ <div class="card"><div class="card-h"><h2>Returns in range</h2></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Slip</th><th>Customer</th><th>Items</th><th>Store</th><th class="right">Credit</th></tr></thead><tbody>${rets.sort((a,b)=>b.at-a.at).map(r=>`<tr class="click" data-act="retReceipt" data-r="${r.id}"><td class="num small">${fmtD(r.at)}</td><td class="mono">${esc(r.receipt)}</td><td>${esc(C(r.customerId).name)}</td><td class="wrap small">${r.items.map(i=>esc(P(i.pid).name)).join('<br>')}${r.exch.length?`<div class="muted">↔ ${r.exch.map(i=>esc(P(i.pid).name)).join(', ')}</div>`:''}</td><td>${esc(ST(r.storeId).name)}</td><td class="right num ${r.net>=0?'diff-pos':'diff-neg'}">${money(r.net)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">No returns in this range.</td></tr>'}</tbody></table></div></div>`};
+
+REPORT.repairs=(R)=>{const js=S.repairs.filter(r=>r.createdAt>=R.a&&r.createdAt<R.b&&inRepStore(r));
+ const done=js.filter(r=>r.history.some(h=>h.status==='returned'));const tat=done.map(r=>(r.history.find(h=>h.status==='returned').at-r.createdAt)/DAY);const avg=tat.length?tat.reduce((a,b)=>a+b,0)/tat.length:0;
+ const cost=js.reduce((a,r)=>a+(r.repairCost||0),0),ship=js.reduce((a,r)=>a+(r.shipCost||0),0);
+ UI._csv=['ticket,store,created,device,customer,damage,status,complexity,repair_cost,shipping',...js.map(r=>[r.id,ST(r.storeId).name,new Date(r.createdAt).toISOString(),r.device,r.customer,r.damage.join('; '),REPAIR_LABEL[r.status],r.complexity,r.repairCost??'',r.shipCost??''].map(csvCell).join(','))].join('\n');
+ return `<div class="kpis k6">${kpi('Jobs checked in',js.length,'')}${kpi('Fixed',js.filter(r=>r.history.some(h=>h.status==='fixed')).length,'')}${kpi('Not repairable',js.filter(r=>r.history.some(h=>h.status==='notfix')).length,'')}${kpi('Avg turnaround',avg?avg.toFixed(1)+' days':'—','check-in → back in shop')}${kpi('Repair cost',money(cost),'billed by technician')}${kpi('Shipping',money(ship),'')}</div>
+ <div class="cols even" style="margin-bottom:16px"><div class="card"><div class="card-h"><h2>Where jobs are now</h2></div><div class="card-b">${hbars(REPAIR_FLOW.map(([k,t])=>({label:t,v:js.filter(r=>r.status===k).length})).filter(x=>x.v),{fmt:n=>n+' jobs'})}</div></div>
+ <div class="card"><div class="card-h"><h2>Most common damage</h2></div><div class="card-b">${hbars(groupSum(js.flatMap(r=>r.damage),d=>d,()=>1).slice(0,8).map(([d,v])=>({label:d,v})),{fmt:n=>n+' jobs',cls:'alt'})}</div></div></div>
+ <div class="card"><div class="card-h"><h2>Jobs in range</h2></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Ticket</th><th>Device</th><th>Store</th><th>Checked in</th><th>Status</th><th class="right">Cost + ship</th></tr></thead><tbody>${js.sort((a,b)=>b.createdAt-a.createdAt).map(r=>`<tr class="click" data-act="openRepair" data-r="${r.id}"><td class="mono">${r.id}</td><td>${esc(r.device)}<div class="small muted">${esc(r.customer)}</div></td><td>${esc(ST(r.storeId).name)}</td><td class="num small">${fmtD(r.createdAt)}</td><td>${repPill(r.status)}</td><td class="right num">${r.repairCost!=null?money(r.repairCost+(r.shipCost||0)):'—'}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">No repairs checked in during this range.</td></tr>'}</tbody></table></div></div>`};
+
+REPORT.cash=(R)=>{const sh=S.shifts.filter(x=>x.openAt>=R.a&&x.openAt<R.b&&inRepStore(x)).sort((a,b)=>b.openAt-a.openAt);const closed=sh.filter(x=>x.closeAt);
+ const coll=closed.reduce((a,x)=>a+(x.cashCollected??0),0),dep=closed.reduce((a,x)=>a+x.declared,0);const vv=closed.filter(x=>Math.abs(x.declared-(x.cashCollected??0))>.004);
+ const B=buckets(R.p==='all'?Math.min(...S.shifts.map(x=>x.openAt)):R.a,R.b).filter(k=>k.b-k.a>=DAY-1);
+ UI._csv=['store,employee,opened,closed,opening,cash_collected,deposit,difference,note',...sh.map(x=>[ST(x.storeId).name,U(x.userId).name,new Date(x.openAt).toISOString(),x.closeAt?new Date(x.closeAt).toISOString():'',x.opening,x.cashCollected??'',x.closeAt?x.declared:'',x.closeAt?r2(x.declared-(x.cashCollected??0)):'',x.note||''].map(csvCell).join(','))].join('\n');
+ return `<div class="kpis k6">${kpi('Shifts',sh.length,`${sh.length-closed.length} still open`)}${kpi('Cash collected',money(coll),'from cash sales')}${kpi('Deposits handed over',money(dep),'')}${kpi('Difference',money(dep-coll),dep-coll<0?'less than collected':'')}${kpi('Shifts with a difference',vv.length,'each has a note')}${kpi('Avg cash per shift',money(closed.length?coll/closed.length:0),'')}</div>
+ ${B.length?`<div class="card" style="margin-bottom:16px"><div class="card-h"><div><h2>Cash deposits by day</h2><div class="small muted">Hover a bar to see the day's deposit</div></div></div><div class="card-b">${vchart(B.map(k=>{const xs=closed.filter(x=>x.openAt>=k.a&&x.openAt<k.b);const v=xs.reduce((a,x)=>a+x.declared,0);return{label:k.label,v,tip:`${k.long}\n${money(v)} deposited · ${xs.length} shift${xs.length===1?'':'s'}`}}))}</div></div>`:''}
+ <div class="card"><div class="card-h"><h2>Shifts</h2></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Staff</th><th>Store</th><th class="right">Opening</th><th class="right">Cash collected</th><th class="right">Deposit</th><th class="right">Difference</th><th>Note</th></tr></thead><tbody>${sh.slice(0,200).map(x=>{const d=x.closeAt?r2(x.declared-(x.cashCollected??0)):null;return `<tr><td class="num small">${fmtD(x.openAt)}</td><td>${esc(U(x.userId).name)}</td><td>${esc(ST(x.storeId).name)}</td><td class="right num">${money(x.opening)}</td><td class="right num">${x.closeAt?money(x.cashCollected??0):pill('Open','ok')}</td><td class="right num">${x.closeAt?money(x.declared):'—'}</td><td class="right num ${d<0?'diff-neg':d>0?'diff-pos':''}">${d==null?'':d?money(d):'0.00'}</td><td class="small wrap">${esc(x.note||'')}</td></tr>`}).join('')||'<tr><td colspan="8" class="empty">No shifts in this range.</td></tr>'}</tbody></table></div></div>`};
+ON.rfSet=e=>{UI.rf[e.dataset.k]=e.value;if(e.dataset.k==='store')UI.rf.emp='';render()};
+ACT.rfClear=()=>{UI.rf.emp='';UI.rf.cat='';render()};
+ACT.rtab=e=>{UI.rtab=e.dataset.v;render()};
+ACT.copyReport=()=>copyText(UI._csv||'','Report');
+
+/* ---- global search ---- */
+ON.gsearch=e=>{const q=e.value.toLowerCase().trim();const box=$('#gres');if(q.length<2){box.hidden=true;box.innerHTML='';return}const w=q.split(/\s+/);
+ const ps=S.products.filter(p=>w.every(x=>(p.name+' '+p.vendorSku+' '+p.ean+' '+p.mpn+' '+p.model).toLowerCase().includes(x))).slice(0,6);
+ const cs=custMatches(q).slice(0,4);const rs=S.repairs.filter(r=>(r.id+' '+r.customer+' '+r.device+' '+r.imei).toLowerCase().includes(q)).slice(0,4);const sid=curStore();
+ box.innerHTML=(ps.length?`<h4>Products</h4>${ps.map(p=>`<button data-act="gpick" data-k="p" data-id="${p.id}"><span>${esc(p.name)}</span><span class="muted num">${sid==='all'?totalQty(p.id):qty(sid,p.id)} · ${money(p.price)}</span></button>`).join('')}`:'')+
+  (cs.length?`<h4>Customers</h4>${cs.map(c=>`<button data-act="gpick" data-k="c" data-id="${c.id}"><span>${esc(c.name)} <span class="muted">${esc(c.phone)}</span></span><span class="num">${money(c.credit)}</span></button>`).join('')}`:'')+
+  (rs.length?`<h4>Repairs</h4>${rs.map(r=>`<button data-act="gpick" data-k="r" data-id="${r.id}"><span>${r.id} · ${esc(r.device)}</span><span class="muted">${esc(REPAIR_LABEL[r.status])}</span></button>`).join('')}`:'')||'<div class="empty small">No products, customers or repairs match.</div>';box.hidden=false};
+ACT.gpick=e=>{const box=$('#gres');box.hidden=true;$('#gq').value='';const k=e.dataset.k,id=e.dataset.id;if(k==='p')productDrawer(id);else if(k==='c')customerModal(id);else repairModal(id)};
+document.addEventListener('click',ev=>{const b=$('#gres');if(b&&!b.hidden&&!ev.target.closest('.gsearch'))b.hidden=true});
+
 /* keep focus + caret when a view re-renders while typing */
 const _render=render;render=function(){const a=document.activeElement;const id=a&&a.id&&!a.closest('#modal')?a.id:null;let s=null;try{s=a.selectionStart}catch(e){}
  _render();let restored=false;if(id){const n=document.getElementById(id);if(n){n.focus();restored=true;try{if(s!=null)n.setSelectionRange(s,s)}catch(e){}}}
