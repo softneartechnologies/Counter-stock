@@ -84,7 +84,7 @@ function seed(){
     {id:'u7',name:'Ravi Patel',role:'tech',storeId:null,email:'ravi@example.com',active:true}],
    products:[],stock:{s1:{},s2:{},s3:{},s4:{}},batches:[],sales:[],customers:[],credits:[],returns:[],repairs:[],transfers:[],shifts:[],log:[],
    settings:{catThreshold:{Screens:0,Batteries:0,'Back Glass':0,'Small Parts':0,Cases:0,'Cables & Chargers':2,'Audio & Accessories':0,Devices:0},
-             catMin:{Screens:6,Batteries:6,'Back Glass':0,'Small Parts':0,Cases:20,'Cables & Chargers':10,'Audio & Accessories':0,Devices:2},labelSize:'50x25',labelMode:'both',markup:40,blindClose:true},expenses:[],empCredits:[],counts:[],
+             catMin:{Screens:6,Batteries:6,'Back Glass':0,'Small Parts':0,Cases:20,'Cables & Chargers':10,'Audio & Accessories':0,Devices:2},labelSize:'50x25',labelMode:'both',markup:40,markupType:'pct',discType:'pct',discMax:10,blindClose:true},expenses:[],empCredits:[],counts:[],
    seq:{receipt:1040,repair:310,sale:5200,transfer:12},session:null,alertState:{}};
   S=D; const L=(type,msg,o)=>log(type,msg,o);
   let n=1;

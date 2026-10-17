@@ -3,7 +3,7 @@ const val=id=>{const e=document.getElementById(id);return e?e.value:''};
 function copyText(text,label){const fallback=()=>modal('Copy '+label,`<p class="small muted">Your browser blocked automatic copying. Select all (Ctrl/Cmd + A) and copy.</p><textarea class="in mono small" rows="12" id="copyArea">${esc(text)}</textarea>`,`<button class="btn pri" data-act="closeModal">Done</button>`);
  try{navigator.clipboard.writeText(text).then(()=>toast(label+' copied. Paste it into Excel or a new .csv file.'),fallback)}catch(e){fallback()}}
 const csvCell=v=>/[",\n]/.test(String(v))?'"'+String(v).replace(/"/g,'""')+'"':String(v);
-function addToCart(p){const sid=curStore();const l=UI.cart.find(x=>x.pid===p.id);if(l)l.qty++;else UI.cart.push({pid:p.id,qty:1,price:p.price});UI.lastHit=p.id;UI.scanErr=qty(sid,p.id)<=0?`${p.name} shows 0 in stock at ${ST(sid).name}. Check the shelf, or adjust stock if the count is wrong.`:''}
+function addToCart(p){const sid=curStore();const l=UI.cart.find(x=>x.pid===p.id);if(l)l.qty++;else UI.cart.push({pid:p.id,qty:1,price:p.price,list:p.price});UI.lastHit=p.id;UI.scanErr=qty(sid,p.id)<=0?`${p.name} shows 0 in stock at ${ST(sid).name}. Check the shelf, or adjust stock if the count is wrong.`:''}
 function pickCustomer(id,forWhat){if(forWhat==='ret'){UI.ret.custId=id}else if(forWhat==='pos'){UI.cartCust=id;UI.useCredit=C(id)&&C(id).credit>0}render()}
 
 const ACT={
@@ -32,7 +32,7 @@ const ACT={
   if(due>0&&!UI.payCash&&!UI.payCard){toast('Tick Cash deposit or Debit / card.');return}
   let cash=UI.payCash&&UI.payCard?r2(Math.min(due,Math.max(0,+(UI.cashPart??due/2)||0))):UI.payCash?due:0;const card=r2(due-cash);
   const sale={id:'S'+(++S.seq.sale),storeId:sid,at:Date.now(),by:me().id,shiftId:openShift().id,items:UI.cart.map(l=>({...l})),total:sub,pay:{cash,card,credit},customerId:cust?cust.id:null};
-  S.sales.push(sale);for(const l of sale.items){addStock(sid,l.pid,-l.qty);log('SALE',`Scanned out ${l.qty} × ${P(l.pid).name} — ${money(l.price*l.qty)} (${[cash?'Cash':'',card?'Card':'',credit?'Credit':''].filter(Boolean).join(' + ')}) · ${qty(sid,l.pid)} left`,{pid:l.pid,ref:sale.id})}
+  S.sales.push(sale);for(const l of sale.items){addStock(sid,l.pid,-l.qty);log('SALE',`Scanned out ${l.qty} × ${P(l.pid).name} — ${money(l.price*l.qty)}${l.list&&l.price<l.list?` (discount ${money((l.list-l.price)*l.qty)} off ${money(l.list)})`:''} (${[cash?'Cash':'',card?'Card':'',credit?'Credit':''].filter(Boolean).join(' + ')}) · ${qty(sid,l.pid)} left`,{pid:l.pid,ref:sale.id})}
   if(credit){cust.credit=r2(cust.credit-credit);S.credits.push({id:uid('CL'),customerId:cust.id,at:Date.now(),storeId:sid,by:me().id,type:'redeem',amount:-credit,ref:sale.id,note:'Used on sale '+sale.id});log('CREDIT',`${cust.name} used ${money(credit)} store credit on ${sale.id} — balance ${money(cust.credit)}`,{ref:sale.id})}
   UI.cart=[];UI.cartCust=null;UI.useCredit=false;UI.payCash=UI.payCard=false;UI.cashPart=null;UI.lastHit=null;UI.scanErr='';save();render();showReceipt(saleReceiptData(sale))},
  saleReceipt:e=>showReceipt(saleReceiptData(S.sales.find(s=>s.id===e.dataset.s))),
@@ -105,7 +105,7 @@ const ACT={
  storeForm:e=>storeForm(e.dataset.s), userForm:()=>userForm(),
  toggleUser:e=>{const u=U(e.dataset.u);u.active=!u.active;log('USER',`${u.active?'Enabled':'Disabled'} account for ${u.name}`,{storeId:u.storeId||'all'});save();render()},
  labelsDone:()=>{const n=UI.lbl.items.reduce((a,i)=>a+(+i.copies||0),0);if(n)log('LABEL',`Label sheet prepared: ${n} labels (${UI.lbl.items.length} products)`,{pid:UI.lbl.items.length===1?UI.lbl.items[0].pid:null});save();closeModal()}};
-function saleReceiptData(s){return{title:'SALES RECEIPT',no:s.id,at:s.at,by:s.by,storeId:s.storeId,customer:s.customerId?C(s.customerId):null,lines:s.items.map(i=>({name:P(i.pid).name,left:`${i.qty} × ${money(i.price)}`,amt:money(i.qty*i.price)})),
+function saleReceiptData(s){return{title:'SALES RECEIPT',no:s.id,at:s.at,by:s.by,storeId:s.storeId,customer:s.customerId?C(s.customerId):null,lines:s.items.map(i=>({name:P(i.pid).name,left:`${i.qty} × ${money(i.price)}${i.list&&i.price<i.list?' (was '+money(i.list)+')':''}`,amt:money(i.qty*i.price)})),
  totals:[['Subtotal',money(s.total)],...(s.pay.credit?[['Store credit','−'+money(s.pay.credit)]]:[]),...(s.pay.cash?[['Paid cash',money(s.pay.cash)]]:[]),...(s.pay.card?[['Paid card',money(s.pay.card)]]:[]),['Total',money(s.total),true]],footer:'Thank you! Keep this receipt for returns.'}}
 
 const ON={
