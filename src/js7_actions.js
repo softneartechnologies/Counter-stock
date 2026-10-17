@@ -29,7 +29,7 @@ const ACT={
  completeSale:()=>{const sid=curStore();if(!openShift()){toast('Start your shift first so the cash is counted.');shiftOpenModal(false);return}
   const short=UI.cart.find(l=>l.qty>qty(sid,l.pid));if(short){toast(`Only ${qty(sid,short.pid)} of "${P(short.pid).name}" in stock. Fix the quantity or adjust stock.`);return}
   const sub=r2(UI.cart.reduce((a,l)=>a+l.price*l.qty,0));const cust=UI.cartCust&&C(UI.cartCust);const credit=cust&&UI.useCredit?Math.min(cust.credit,sub):0;const due=r2(sub-credit);
-  if(due>0&&!UI.payCash&&!UI.payCard){toast('Tick Cash deposit or Card pay.');return}
+  if(due>0&&!UI.payCash&&!UI.payCard){toast('Tick Cash deposit or Debit / card.');return}
   let cash=UI.payCash&&UI.payCard?r2(Math.min(due,Math.max(0,+(UI.cashPart??due/2)||0))):UI.payCash?due:0;const card=r2(due-cash);
   const sale={id:'S'+(++S.seq.sale),storeId:sid,at:Date.now(),by:me().id,shiftId:openShift().id,items:UI.cart.map(l=>({...l})),total:sub,pay:{cash,card,credit},customerId:cust?cust.id:null};
   S.sales.push(sale);for(const l of sale.items){addStock(sid,l.pid,-l.qty);log('SALE',`Scanned out ${l.qty} × ${P(l.pid).name} — ${money(l.price*l.qty)} (${[cash?'Cash':'',card?'Card':'',credit?'Credit':''].filter(Boolean).join(' + ')}) · ${qty(sid,l.pid)} left`,{pid:l.pid,ref:sale.id})}
@@ -68,14 +68,17 @@ const ACT={
   if(k.pay>0&&R.payCash&&!openShift()){toast('Start your shift first so the cash is counted.');shiftOpenModal(false);return}
   const short=R.exch.find(i=>qty(sid,i.pid)<1);if(short){toast(`"${P(short.pid).name}" is not in stock here.`);return}
   const now=Date.now(),no='CR-'+(++S.seq.receipt),c=k.cust,by=me().id;
+  if(k.net>0&&R.refundMethod==='cash'&&!openShift()){toast('Start your shift first: a cash refund comes out of the till.');shiftOpenModal(false);return}
   const rec={id:uid('R'),receipt:no,storeId:sid,at:now,by,shiftId:openShift()?openShift().id:null,customerId:c.id,items:R.items.map(i=>({...i,value:r2(+i.value),restock:i.condition==='resell'})),exch:R.exch.map(i=>({...i,price:r2(+i.price)})),adjust:k.adj,adjustNote:R.adjustNote,net:k.net,usedOld:k.useOld,collected:k.pay?{cash:R.payCash?k.pay:0,card:R.payCash?0:k.pay}:null};
   const L=(type,amount,note)=>{if(amount)S.credits.push({id:uid('CL'),customerId:c.id,at:now,storeId:sid,by,type,amount:r2(amount),ref:no,note})};
   L('return',k.rv,'Returned '+rec.items.map(i=>P(i.pid).name).join(', '));L('exchange',-k.ev,rec.exch.length?'Took '+rec.exch.map(i=>P(i.pid).name).join(', '):'');L('adjust',k.adj,R.adjustNote||'Adjustment');
   if(k.net<0){L('redeem',-k.useOld,'Existing credit used');L('payment',k.pay,`Customer paid difference by ${R.payCash?'cash':'card'}`)}
-  c.credit=r2(c.credit+(k.net>=0?k.net:-k.useOld));rec.balanceAfter=c.credit;
+  const rm=k.net>0?(R.refundMethod||'credit'):'credit';rec.refundMethod=rm;
+  if(rm!=='credit'){L('refund',-k.net,`Refunded ${money(k.net)} by ${rm==='cash'?'cash from till':'debit / card'}`);rec.refunded={method:rm,amount:k.net}}
+  c.credit=r2(c.credit+(k.net>=0?(rm==='credit'?k.net:0):-k.useOld));rec.balanceAfter=c.credit;
   for(const i of rec.items){if(i.restock)addStock(sid,i.pid,1);log('RETURN',`${no}: ${c.name} returned ${P(i.pid).name} valued ${money(i.value)} — ${i.restock?'back in stock':'faulty, not restocked'}${i.note?' · '+i.note:''}`,{pid:i.pid,ref:no})}
   for(const i of rec.exch){addStock(sid,i.pid,-1);log('RETURN',`${no}: ${c.name} took ${P(i.pid).name} in exchange at ${money(i.price)} · ${qty(sid,i.pid)} left`,{pid:i.pid,ref:no})}
-  log('CREDIT',`${no}: ${k.net>=0?`${money(k.net)} store credit issued to`:`${money(-k.net)} owed by`} ${c.name}${k.adj?` (adjustment ${money(k.adj)}${R.adjustNote?': '+R.adjustNote:''})`:''} — balance now ${money(c.credit)}`,{ref:no});
+  log('CREDIT',`${no}: ${k.net>=0?(rm==='credit'?`${money(k.net)} store credit issued to`:`${money(k.net)} refunded (${rm}) to`):`${money(-k.net)} owed by`} ${c.name}${k.adj?` (adjustment ${money(k.adj)}${R.adjustNote?': '+R.adjustNote:''})`:''} — balance now ${money(c.credit)}`,{ref:no});
   S.returns.push(rec);UI.ret=null;save();render();showReceipt(returnReceiptData(rec))},
  retReceipt:e=>showReceipt(returnReceiptData(S.returns.find(r=>r.id===e.dataset.r))),
  openCustomer:e=>customerModal(e.dataset.c),
@@ -138,7 +141,7 @@ const FORM={
  scanExch:()=>{const p=findByCode(val('exScan'));if(!p){toast('No product found for that code.');return}UI.ret.exch.push({pid:p.id,price:p.price});render();setTimeout(()=>{const x=$('#exScan');x&&x.focus()},40)},
  findRepair:()=>{const q=val('repScan').trim().toUpperCase();const r=S.repairs.find(x=>x.id===q||x.id===('RP-'+q)||x.imei===q);if(r)repairModal(r.id);else toast('No repair with that ticket or IMEI.')},
  saveProduct:f=>{const g=k=>val('f_'+k).trim();const id=f.dataset.p;const data={name:g('name'),category:g('category'),brand:g('brand'),model:g('model'),vendor:g('vendor'),vendorSku:g('vendorSku'),mpn:g('mpn'),upc:g('upc'),cost:r2(parseFloat(g('cost'))||0)};
-  const pr=parseFloat(g('price'));data.price=isNaN(pr)?sellPrice(data.cost,data.category):r2(pr);const th=g('threshold');data.threshold=th===''?null:+th;
+  const pr=parseFloat(g('price'));data.manualPrice=!isNaN(pr);data.price=isNaN(pr)?sellPrice(data.cost,data.category):r2(pr);const th=g('threshold');data.threshold=th===''?null:+th;
   const dup=S.products.find(p=>p.vendorSku===data.vendorSku&&p.id!==id);if(dup){toast(`Vendor SKU ${data.vendorSku} already belongs to "${dup.name}".`);return}
   if(id){const p=P(id);const ch=Object.keys(data).filter(k=>String(p[k]??'')!==String(data[k]??''));Object.assign(p,data);if(ch.length)log('PRODUCT',`Edited ${p.name}: ${ch.join(', ')} changed`,{pid:p.id});save();closeModal();render();productDrawer(id);return}
   const n=S.products.length+1+Math.floor(Math.random()*1e5);const p={id:uid('p'),ean:ean13(n),...data,createdAt:Date.now()};S.products.push(p);const q=Math.max(0,parseInt(val('f_qty'))||0);const sid=curStore();

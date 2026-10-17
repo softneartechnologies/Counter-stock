@@ -2,7 +2,7 @@
 import os
 D=os.path.dirname(os.path.abspath(__file__))
 src=lambda f:open(os.path.join(D,'src',f),encoding='utf-8').read()
-JS=['js1_core.js','js2_shell.js','js3_views.js','js4_stock.js','js5_more.js','js6_admin.js','js7_actions.js','js8_reports.js','js9_boot.js']
+JS=['js1_core.js','js2_shell.js','js3_views.js','js4_stock.js','js5_more.js','js6_admin.js','js7_actions.js','js8_reports.js','js10_ops.js','js9_boot.js']
 body=f'''<title>Counterstock Inventory</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -1,5 +1,5 @@
 /* ============ Counterstock — core ============ */
-const KEY='counterstock.v2';
+const KEY='counterstock.v3';
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>(n<0?'−':'')+'$'+Math.abs(+n||0).toFixed(2);
@@ -28,7 +28,7 @@ function ean13(n){const base=('200'+String(n).padStart(9,'0')).slice(0,12);let s
 function sellPrice(cost,cat){const m={Screens:2.1,Batteries:2.6,'Back Glass':3,'Small Parts':3.5,Cases:1.75,'Cables & Chargers':2.6,'Audio & Accessories':1.7,Devices:1.18}[cat]||2;let p=cost*m;p=p<10?Math.ceil(p)-0.01:Math.ceil(p/5)*5-0.01;return r2(Math.max(p,4.99))}
 
 let S=null;
-function load(){try{const raw=localStorage.getItem(KEY);if(raw){S=JSON.parse(raw);if(S&&S.v===2)return}}catch(e){}S=seed();save(true)}
+function load(){try{const raw=localStorage.getItem(KEY);if(raw){S=JSON.parse(raw);if(S&&S.v===3)return}}catch(e){}S=seed();save(true)}
 function save(skipAlerts){if(!skipAlerts)syncAlerts();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
 /* ---- lookups ---- */
@@ -68,23 +68,23 @@ function shiftCash(sh){let cash=0,card=0,refunds=0;for(const s of S.sales)if(s.s
 /* ============ demo seed (built from the vendor files the client shared) ============ */
 function seed(){
   const R=rng(20261016), now=Date.now(), ri=(a,b)=>a+Math.floor(R()*(b-a+1)), pick=a=>a[Math.floor(R()*a.length)];
-  const D={v:2,stores:[
+  const D={v:3,stores:[
     {id:'s1',name:'Douglas St',address:'1150 Douglas St, Unit 219, Victoria BC V8W 3M9',phone:'778-869-4006'},
     {id:'s2',name:'Hillside Ave',address:'1644 Hillside Ave, Unit 124A, Victoria BC V8T 2C5',phone:'778-858-6588'},
     {id:'s3',name:'Victoria North',address:'Victoria BC V8P 1A4',phone:''},
     {id:'s4',name:'Park Royal',address:'2002 Park Royal South, West Vancouver BC V7T 2W4',phone:'236-833-1038'}],
    users:[
     {id:'u0',name:'Owner',role:'super',storeId:null,email:'owner@example.com',active:true},
-    {id:'u1',name:'Priya Sharma',role:'admin',storeId:'s1',email:'priya@example.com',active:true},
-    {id:'u2',name:'Daniel Wong',role:'admin',storeId:'s2',email:'daniel@example.com',active:true},
-    {id:'u3',name:'Aman Gill',role:'staff',storeId:'s1',email:'aman@example.com',active:true},
-    {id:'u4',name:'Sofia Reyes',role:'staff',storeId:'s2',email:'sofia@example.com',active:true},
-    {id:'u5',name:'Tom Becker',role:'staff',storeId:'s4',email:'tom@example.com',active:true},
-    {id:'u6',name:'Kiran Dhillon',role:'staff',storeId:'s3',email:'kiran@example.com',active:true},
+    {id:'u1',name:'Priya Sharma',role:'admin',storeId:'s1',email:'priya@example.com',active:true,rate:24},
+    {id:'u2',name:'Daniel Wong',role:'admin',storeId:'s2',email:'daniel@example.com',active:true,rate:24},
+    {id:'u3',name:'Aman Gill',role:'staff',storeId:'s1',email:'aman@example.com',active:true,rate:19},
+    {id:'u4',name:'Sofia Reyes',role:'staff',storeId:'s2',email:'sofia@example.com',active:true,rate:19},
+    {id:'u5',name:'Tom Becker',role:'staff',storeId:'s4',email:'tom@example.com',active:true,rate:18.5},
+    {id:'u6',name:'Kiran Dhillon',role:'staff',storeId:'s3',email:'kiran@example.com',active:true,rate:18.5},
     {id:'u7',name:'Ravi Patel',role:'tech',storeId:null,email:'ravi@example.com',active:true}],
    products:[],stock:{s1:{},s2:{},s3:{},s4:{}},batches:[],sales:[],customers:[],credits:[],returns:[],repairs:[],transfers:[],shifts:[],log:[],
    settings:{catThreshold:{Screens:0,Batteries:0,'Back Glass':0,'Small Parts':0,Cases:0,'Cables & Chargers':2,'Audio & Accessories':0,Devices:0},
-             catMin:{Screens:6,Batteries:6,'Back Glass':0,'Small Parts':0,Cases:20,'Cables & Chargers':10,'Audio & Accessories':0,Devices:2},labelSize:'50x25',labelMode:'both'},
+             catMin:{Screens:6,Batteries:6,'Back Glass':0,'Small Parts':0,Cases:20,'Cables & Chargers':10,'Audio & Accessories':0,Devices:2},labelSize:'50x25',labelMode:'both',markup:40,blindClose:true},expenses:[],empCredits:[],counts:[],
    seq:{receipt:1040,repair:310,sale:5200,transfer:12},session:null,alertState:{}};
   S=D; const L=(type,msg,o)=>log(type,msg,o);
   let n=1;
@@ -115,7 +115,7 @@ function seed(){
     {id:'c2',name:'Mei Chen',email:'mei.chen@example.com',phone:'250-555-0188',nid:'BC-DL 6623110',credit:0,createdAt:now-6*DAY},
     {id:'c3',name:'Lucas Martin',email:'lucas.m@example.com',phone:'604-555-0119',nid:'PP GA448812',credit:0,createdAt:now-3*DAY}];
   // 60 days of sales history so reports have real shape (weekday rhythm, busy afternoons)
-  const staffBy={s1:['u3','u1'],s2:['u4','u2'],s3:['u6'],s4:['u5']};const storeBase={s1:9,s2:8,s3:6,s4:5};
+  const staffBy={s1:['u3','u1'],s2:['u4','u2'],s3:['u6'],s4:['u5']};const storeBase={s1:17,s2:15,s3:12,s4:12};
   const HOURS=[10,11,11,12,12,12,13,13,14,14,15,15,16,16,16,17,17,18,19,20];
   const notes={'2s1':['Paid $40 cash to courier for urgent screen delivery (receipt in drawer)',-40],'9s2':['$20 for cleaning supplies from the dollar store',-20],'16s4':['Short $5 — likely wrong change given',-5],'23s1':['Customer paid $10 extra for case, refunded next day',10]};
   for(let d=100;d>=0;d--){const day=new Date(now-d*DAY);day.setHours(0,0,0,0);const dow=day.getDay();const wk=dow===6?1.4:dow===5?1.2:dow===0?0.65:1;
@@ -127,8 +127,9 @@ function seed(){
       if(!items.length)continue;const tot=r2(items.reduce((a,i)=>a+i.qty*i.price,0));const cash=R()<.42;
       const sale={id:'S'+(++D.seq.sale),storeId:s.id,at,by:u,shiftId:sh?sh.id:null,items,total:tot,pay:{cash:cash?tot:0,card:cash?0:tot,credit:0},customerId:null};D.sales.push(sale);
       if(d<=2)L('SALE',`Scanned out ${items.map(i=>i.qty+' × '+P(i.pid).name).join(', ')} — ${money(tot)} (${cash?'Cash':'Card'})`,{at,by:u,storeId:s.id,pid:items[0].pid,ref:sale.id})}
-    if(sh){const c=shiftCash(sh);sh.closeAt=open+9.5*36e5;sh.expected=r2(sh.opening+c.cash);sh.cashCollected=c.cash;sh.declared=c.cash;const nt=notes[d+s.id];
-      if(nt){sh.declared=r2(Math.max(0,c.cash+nt[1]));sh.note=nt[0]}
+    if(sh&&R()<.22){const t=pick([['Courier for urgent parts',ri(15,45)],['Cleaning supplies',ri(8,25)],['Coffee & water for shop',ri(10,22)],['Screen protectors from local supplier',ri(20,60)],['Parking for parts pickup',ri(6,14)]]);D.expenses.push({id:uid('E'),storeId:s.id,at:open+ri(2,7)*36e5,by:u,type:'expense',cat:'Shop supplies',amount:t[1],method:'cash',note:t[0],shiftId:sh.id})}
+    if(sh){const c=shiftCash(sh);sh.closeAt=open+9.5*36e5;sh.counted=r2(sh.opening+c.cash);sh.expected=r2(sh.opening+c.cash);sh.cashCollected=c.cash;sh.declared=c.cash;const nt=notes[d+s.id];
+      if(nt){sh.declared=r2(Math.max(0,c.cash+nt[1]));sh.note=nt[0]}sh.counted=r2(sh.opening+sh.declared);
       if(d<=3){L('SHIFT',`${U(u).name} opened shift with ${money(sh.opening)} opening balance`,{at:open,by:u,storeId:s.id});L('SHIFT',`${U(u).name} closed shift — cash deposit ${money(sh.declared)}${sh.note?` (system ${money(c.cash)}; note: ${sh.note})`:''}`,{at:sh.closeAt,by:u,storeId:s.id})}}}}
   D.customers.push(
     {id:'c4',name:'Priyanka Rao',email:'priyanka.r@example.com',phone:'250-555-0193',nid:'BC-DL 5512870',credit:0,createdAt:now-50*DAY},
@@ -174,6 +175,7 @@ function seed(){
   const ip=D.products.find(p=>/17 Pro Max 256/.test(p.name));
   D.transfers.push({id:'TR-'+(++D.seq.transfer),from:'s2',to:'s1',items:[{pid:ip.id,qty:1}],status:'requested',by:'u3',at:now-3*36e5,note:'Customer waiting — wants it today',history:[{at:now-3*36e5,by:'u3',status:'requested'}]});
   L('TRANSFER',`TR-${D.seq.transfer} requested 1 × ${ip.name} from Hillside Ave`,{at:now-3*36e5,by:'u3',storeId:'s1',pid:ip.id});
+  seedOps(D,R,ri,pick,now,staffBy,L);
   D.log.sort((a,b)=>b.at-a.at);
   S=D; S.session=null; syncAlerts();
   for(const s of D.stores){for(const k in S.alertState[s.id])S.alertState[s.id][k]=now-DAY}

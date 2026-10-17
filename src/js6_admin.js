@@ -34,7 +34,7 @@ VIEWS.guide=()=>`<div class="page-h"><div><h1>Daily guide</h1><p>How a normal da
  <div class="cols even">
  ${[['Opening the shop (staff)',['Sign in with your own account. Never use someone else\'s: every action is logged under your name.','Count the float and enter the <b>opening balance</b>.','Open <b>Inventory alerts</b> and note anything out of stock.','Check <b>Store exchange</b> for requests from other shops and dispatch them.']],
    ['When a delivery arrives',['Download the vendor\'s order CSV or fill the template from the PDF invoice.','<b>Receive stock</b> → upload → check the matched columns.','Count the box. Fix <b>Received</b> where it differs and pick a reason.','Confirm, then print and stick one label on every unit.']],
-   ['Selling',['<b>Sell / Scan out</b>, scan every item.','Tick <b>Cash deposit</b> or <b>Card pay</b> (both for split payments).','Complete the sale and hand over the receipt.']],
+   ['Selling',['<b>Sell / Scan out</b>, scan every item.','Tick <b>Cash deposit</b> or <b>Debit / card</b> (both for split payments).','Complete the sale and hand over the receipt.']],
    ['Returns and exchanges',['Scan the returned item, set its value and condition.','Find or add the customer (name, email, mobile, national ID).','Scan anything they take instead, add an adjustment if agreed.','Confirm and give the credit slip.']],
    ['Repairs',['<b>New repair</b> with damage and fault notes, print the repair label.','Dispatch to the technician with an expected date.','When it comes back: <b>Back in shop</b>, call the customer, then <b>Collected</b>.']],
    ['Closing (staff)',['<b>End shift</b>. Check the cash collected.','If you spent cash, change the deposit and write why.','Hand the deposit to the admin.']],
